@@ -40,6 +40,7 @@
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.Create_B = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // User_TB
@@ -82,6 +83,7 @@
             this.dTP_Von.Name = "dTP_Von";
             this.dTP_Von.Size = new System.Drawing.Size(200, 20);
             this.dTP_Von.TabIndex = 8;
+            this.dTP_Von.ValueChanged += new System.EventHandler(this.dTP_Von_ValueChanged);
             // 
             // dTP_Bis
             // 
@@ -89,6 +91,7 @@
             this.dTP_Bis.Name = "dTP_Bis";
             this.dTP_Bis.Size = new System.Drawing.Size(200, 20);
             this.dTP_Bis.TabIndex = 9;
+            this.dTP_Bis.ValueChanged += new System.EventHandler(this.dTP_Bis_ValueChanged);
             // 
             // label1
             // 
@@ -137,19 +140,30 @@
             // 
             // Create_B
             // 
-            this.Create_B.Location = new System.Drawing.Point(280, 264);
+            this.Create_B.Location = new System.Drawing.Point(257, 264);
             this.Create_B.Name = "Create_B";
-            this.Create_B.Size = new System.Drawing.Size(75, 23);
+            this.Create_B.Size = new System.Drawing.Size(98, 23);
             this.Create_B.TabIndex = 15;
-            this.Create_B.Text = "Create";
+            this.Create_B.Text = "Create and Print";
             this.Create_B.UseVisualStyleBackColor = true;
             this.Create_B.Click += new System.EventHandler(this.Create_B_Click);
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(16, 264);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(113, 23);
+            this.button1.TabIndex = 16;
+            this.button1.Text = "Alle Zugänge";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(374, 299);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.Create_B);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label4);
@@ -162,6 +176,7 @@
             this.Controls.Add(this.User_Gene);
             this.Controls.Add(this.PW_TB);
             this.Controls.Add(this.User_TB);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Name = "Form1";
             this.Text = "Gast Zugang";
             this.ResumeLayout(false);
@@ -183,6 +198,7 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Button Create_B;
+        private System.Windows.Forms.Button button1;
     }
 }
 

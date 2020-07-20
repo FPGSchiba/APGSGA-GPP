@@ -1,19 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Drawing.Text;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
-using System.Diagnostics;
 using Xceed.Words.NET;
 using Xceed.Document.NET;
 using System.IO;
-using Microsoft.Office.Interop.Word;
 
 namespace APGSGA_GPP_App
 {
@@ -62,7 +53,7 @@ namespace APGSGA_GPP_App
             string show = "local-userdb-guest add username " + username + " password " + password + " start-time " + formatTime(dateBis, true) + " expiry time " + formatTime(dateVon, false);
 
             //Print the Document
-            //print(username, password);
+            print(username, password);
 
             //Send the querry String
             Program.sendData(show);
@@ -202,6 +193,12 @@ namespace APGSGA_GPP_App
 
         public void print(string username, string password)
         {
+            Thread thread = new Thread(() => printMethod(username, password));
+            thread.Start();
+        }
+
+        void printMethod(string username, string password)
+        {
             //Closing Open Files just in case
             Microsoft.Office.Interop.Word.Application word = (Microsoft.Office.Interop.Word.Application)System.Runtime.InteropServices.Marshal.GetActiveObject("Word.Application");
             foreach (Microsoft.Office.Interop.Word.Document dok in word.Documents)
@@ -222,29 +219,29 @@ namespace APGSGA_GPP_App
             var doc = DocX.Create(fileName);
             string title = "Gast Zugang APGSGA";
             string wlanName = "WLAN-Name: APG-Guest" + Environment.NewLine;
-            string user = $"Benutzernamen: \"{username}\"" + Environment.NewLine;
-            string passwd = $"Passwort: \"{password}\"" + Environment.NewLine;
+            string user = $"Benutzernamen: {username}" + Environment.NewLine;
+            string passwd = $"Passwort: {password}" + Environment.NewLine;
 
             //Formatting Title  
             Formatting titleFormat = new Formatting(); 
-            titleFormat.FontFamily = new Xceed.Document.NET.Font("Seoge UI");
+            titleFormat.FontFamily = new Font("Seoge UI");
             titleFormat.Size = 26;
             titleFormat.Position = 40;
 
             //Insert Title
-            Xceed.Document.NET.Paragraph paragraphTitle = doc.InsertParagraph(title, false, titleFormat);
+            Paragraph paragraphTitle = doc.InsertParagraph(title, false, titleFormat);
             paragraphTitle.Alignment = Alignment.center;
 
             //Formatting Anderer Text
             Formatting textParagraphFormat = new Formatting();
-            textParagraphFormat.FontFamily = new Xceed.Document.NET.Font("Seoge UI"); 
+            textParagraphFormat.FontFamily = new Font("Seoge UI"); 
             textParagraphFormat.Size = 14;
 
             //Insert text  
             doc.InsertParagraph(wlanName, false, textParagraphFormat);
             doc.InsertParagraph(user, false, textParagraphFormat);
             doc.InsertParagraph(passwd, false, textParagraphFormat);
-            doc.AddProtection(Xceed.Document.NET.EditRestrictions.readOnly);
+            doc.AddProtection(EditRestrictions.readOnly);
             doc.Save();
 
             //Hide Word
@@ -268,8 +265,6 @@ namespace APGSGA_GPP_App
                 doc = word.Documents.Open(fileName, ReadOnly: true, Visible: true);
             }
 
-            //Close doc
-            doc.Close();
             try
             {
                 //Print the Document
@@ -280,6 +275,9 @@ namespace APGSGA_GPP_App
                 //Handling Printer Errors
                 MessageBox.Show($"Error while Printing: {e.Message}");
             }
+
+            //Close doc
+            doc.Close();
 
             //Close everything Just in Case
             Microsoft.Office.Interop.Word.Application wordRun = (Microsoft.Office.Interop.Word.Application)System.Runtime.InteropServices.Marshal.GetActiveObject("Word.Application");

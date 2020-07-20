@@ -38,7 +38,7 @@ namespace APGSGA_GPP_App
             catch(Exception E)
             {
                 //Error handling while creating data
-                MessageBox.Show("XMl iss doof: " + E);
+                MessageBox.Show(E.Message);
             }
             try
             {
@@ -68,9 +68,9 @@ namespace APGSGA_GPP_App
                 }
                 dataGridView1.Columns.Insert(columnIndex, Print);
             }
-            catch(Exception E)
+            catch
             {
-                MessageBox.Show("Keine zusätzlichen Knöpfe konnten erstellt werden: " + E.Message);
+
             }
         }
 
@@ -88,8 +88,8 @@ namespace APGSGA_GPP_App
             return end;
         }
 
-        //Delete-Button
-        private void dataGridViewSoftware_CellClick(object sender, DataGridViewCellEventArgs e)
+        //Button Handling
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             //Check if its the right Column
             if (e.ColumnIndex == dataGridView1.Columns["Löschen"].Index)
@@ -104,7 +104,7 @@ namespace APGSGA_GPP_App
 
                     //Then the user will be deleted
                     Program.deleteUser(usern);
-                    
+
                     //The Form gets closed
                     Form.ActiveForm.Close();
                 }

@@ -1,10 +1,4 @@
-﻿/* 
-Version: 1.0
-Build: 1.0
-Author: Jann Erhardt
-*/
-
-using Renci.SshNet;
+﻿using Renci.SshNet;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -26,12 +20,16 @@ namespace APGSGA_GPP_App
         //Safe Password and Username
         public static string password = "";
         public static string username = "";
+
+        //The Information to connect to the Server
         public static string host = "192.168.5.11";
         public static string user = "admin";
         public static string pwd = "passw0rd";
+
+        //File location
         public static string localXML = @"C:\temp\Users.xml";
 
-        static void Main()
+        static void Main(string[] args)
         {
             //Make a Thread for the MainLoop
             Thread thread = new Thread(MainLoop);
@@ -269,6 +267,13 @@ namespace APGSGA_GPP_App
         //If the File is Empty create a base structure
         static void newXML()
         {
+            //Create Dictionary if it is not existing
+            if (!Directory.Exists(@"C:\temp"))
+            {
+                Directory.CreateDirectory(@"C:\temp");
+            }
+
+            //Initalise the File
             File.WriteAllText(localXML, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<guestwlan>\n</guestwlan>\n");
         }
 

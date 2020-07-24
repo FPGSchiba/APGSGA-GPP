@@ -1,7 +1,20 @@
-﻿using Renci.SshNet;
+﻿//Header
+//Verison: 1.0
+//Author: Jann Erhardt
+//Discription: 
+/* 
+ * Der Haupt eintritts Punkt des Programms
+ * 
+ * Funktionen: 
+ *      1. Main --> Der Eintritts Punkt des Programms
+ *      2. Die Loops --> Die Windows-Form Loops 
+ *      3. Querry --> Die Querry Funktion, mit der cmd Commands auf dem Server ausgeführt werden
+ *      4. Login Validation --> Die Überprüfung des Logins
+ *      5. Init Main-Loop --> Die Initialisierung des Hauptprogramms
+ *      6. Not Implemented --> Noch nicht fertige Code Stücke / entfernte Code stücke
+ */
+using Renci.SshNet;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using System.Security.Cryptography;
@@ -14,10 +27,8 @@ namespace APGSGA_GPP_App
 {
     static class Program
     {
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
-
+        //Alle Variablen, die Benötigt werden
+        #region Variablen
         //Safe Password and Username
         public static string password = "";
         public static string username = "";
@@ -32,28 +43,23 @@ namespace APGSGA_GPP_App
         //File location
         public static string localXML = @"C:\temp\Users.xml";
 
+        #endregion
+
+        //Die void Main Funktion von c#
+        #region Programm-Start
         static void Main(string[] args)
         {
-
             //Make the Login-Loop
             Thread thread = new Thread(loginLoop);
             thread.Start();
         }
 
-        public static void setMinDate()
-        {
-            //Make a cross-thread action for set the minDate
-            if(Application.OpenForms["Form1"] != null)
-            {
-                Application.OpenForms["Form1"].Invoke(new Action(() => {
+        #endregion
 
-                    (Application.OpenForms["Form1"] as Form1).setMinDate_dTP_Bis();
+        //Alle Loops von den Windwos-Form Klassen
+        #region Loops
 
-                }));
-            }
-        }
-
-        static void MainLoop()
+        public static void MainLoop()
         {
             //The MainLoop of the Application
             Application.EnableVisualStyles();
@@ -63,6 +69,7 @@ namespace APGSGA_GPP_App
 
         public static void showLoop()
         {
+            //The Showloop of the Application
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form2());
@@ -70,10 +77,16 @@ namespace APGSGA_GPP_App
 
         public static void loginLoop()
         {
+            //The Loginloop of the Application
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new login());
         }
+
+        #endregion
+
+        //Die Querry Funktion
+        #region Querry
 
         //Function for the Querry
         public static void sendData(string Data)
@@ -81,7 +94,7 @@ namespace APGSGA_GPP_App
             try
             {
                 //connect to the server with SSH
-                using(SshClient client = new SshClient(host, user, pwd))
+                using (SshClient client = new SshClient(host, user, pwd))
                 {
                     client.Connect();
                     //create a command in the connection and execute it
@@ -93,9 +106,15 @@ namespace APGSGA_GPP_App
             }
             catch
             {
+                //Error Message, when the Command couldn't be executed
                 MessageBox.Show("Error while connecting to the Server, please check your network");
             }
         }
+
+        #endregion
+
+        //Die Validierung des Logins
+        #region Login Validation
 
         //Get the MD5-Hash code from a string
         public static string MD5Hash(string input)
@@ -113,16 +132,20 @@ namespace APGSGA_GPP_App
             return hash.ToString();
         }
 
-
+        //Validate the Login Information
         public static void validateLogin(string password, string username)
         {
             bool validate;
+
+            //Try to use the username to get the Password from the Dictionary
             try
             {
+                //Validate must be true
                 validate = login.dic_login[username] == MD5Hash(password);
             }
             catch
             {
+                //Validate is False
                 validate = false;
 
                 //Makes a cross-thread action to reset the Login Information
@@ -136,7 +159,8 @@ namespace APGSGA_GPP_App
                 }
             }
 
-            if(validate)
+            //Check if the user is Authorised to access the Application
+            if (validate)
             {
                 //Set username and Password for connecting to the server
                 user = username;
@@ -151,7 +175,7 @@ namespace APGSGA_GPP_App
 
                 //Wait til the Program has started
                 string temp = ".0.";
-                while(temp == ".0.")
+                while (temp == ".0.")
                 {
                     if (Application.OpenForms["Form1"] != null)
                     {
@@ -164,15 +188,7 @@ namespace APGSGA_GPP_App
                 }
 
                 //Init the Username and Password
-                wrigthGuest();
-                if (Application.OpenForms["Form1"] != null)
-                {
-                    Application.OpenForms["Form1"].Invoke(new Action(() => {
-
-                        (Application.OpenForms["Form1"] as Form1).Adduser();
-
-                    }));
-                }
+                startMainLoop();
             }
             else
             {
@@ -180,23 +196,51 @@ namespace APGSGA_GPP_App
             }
         }
 
+        #endregion
+
+        //Die initialiserung des Main-Loops
+        #region Init Main-Loop
+
         //Making an Other Username per Login
-        private static void wrigthGuest()
+        private static void startMainLoop()
         {
+            //Get the Computername
             string komplett = Environment.MachineName;
 
-            if(Regex.IsMatch(komplett, @"[CL][LA][A-Z]{3}\d{9}"))
+            //Try to get the right Pattern for APG Computers
+            if (Regex.IsMatch(komplett, @"[CL][LA][A-Z]{3}\d{9}"))
             {
+                //delete everything around the Location în the Computername
                 komplett = Regex.Replace(komplett, "^[CL][LA]", "");
                 komplett = Regex.Replace(komplett, @"\d{9}$", "");
+
+                //Set Gast to the Parsed location
                 Gast = komplett;
             }
             else
             {
+                //Most likely UMB so ask witch location they want to make a User
                 string response = Interaction.InputBox("Für welchen Standort benötigsts du einen Benutzer?", "Standort", "ZHG");
+
+                //Set Gast to the asked location
                 Gast = response;
             }
+
+            //Add a user to The Main Application
+            if (Application.OpenForms["Form1"] != null)
+            {
+                Application.OpenForms["Form1"].Invoke(new Action(() => {
+
+                    (Application.OpenForms["Form1"] as Form1).Adduser();
+
+                }));
+            }
         }
+
+        #endregion
+
+        //Angefangener Code
+        #region Not Implemented
 
         //Optional (not implemented yet
         public static void writeXML()
@@ -212,7 +256,7 @@ namespace APGSGA_GPP_App
 
             var errors = "";
             var results = "";
-            using(var process = Process.Start(psi))
+            using (var process = Process.Start(psi))
             {
                 errors = process.StandardError.ReadToEnd();
                 results = process.StandardOutput.ReadToEnd();
@@ -252,5 +296,8 @@ namespace APGSGA_GPP_App
                 MessageBox.Show(e.Message);
             }
         }
+    
+        #endregion
+
     }
 }

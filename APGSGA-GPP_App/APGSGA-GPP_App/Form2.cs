@@ -1,4 +1,17 @@
-﻿using System;
+﻿//Header
+//Verison: 1.0
+//Author: Jann Erhardt
+//Discription: 
+/* 
+ * Darstellung von Daten --> Darestellung von einem XML
+ * 
+ * Funktionen: 
+ *      1. Init --> Initialisiert alle Komonenten (Form1 Designer -> Generierter Code)
+ *      2. load XML --> Ladet das ins DataSet1 und dann ins DataGrid, danach erstellt es zwei neue spalten mit den Buttons
+ *      3. Buttons --> Die Funktionalität der Knöpfe, also Drucken und Löschen von Benutzer
+ */
+
+using System;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
 
@@ -6,11 +19,19 @@ namespace APGSGA_GPP_App
 {
     public partial class Form2 : Form
     {
+        //Initialisiert das Windows-Form Fenster
+        #region Init
+
         public Form2()
         {
             InitializeComponent();
         }
-        
+
+        #endregion
+
+        //XML öffnen und in ins DataGrid einlesen / Buttons erstellen
+        #region load XML
+
         private void dataSet1_Initialized(object sender, EventArgs e)
         {
             try
@@ -88,6 +109,11 @@ namespace APGSGA_GPP_App
             return end;
         }
 
+        #endregion
+
+        //Button Funktionen 1. Delete / 2. Print
+        #region Buttons
+
         //Button Handling
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -140,5 +166,7 @@ namespace APGSGA_GPP_App
                 }
             }
         }
+
+        #endregion
     }
 }

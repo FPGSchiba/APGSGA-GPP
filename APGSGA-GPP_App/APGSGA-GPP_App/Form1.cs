@@ -1,4 +1,21 @@
-﻿using System;
+﻿//Header
+//Verison: 1.0
+//Author: Jann Erhardt
+//Discription: 
+/* 
+ * Der Main-Loop des Programms
+ * 
+ * Funktionen: 
+ *      1. Init --> Initialisiert alle Komonenten (Form1 Designer -> Generierter Code)
+ *      2. User --> Erstellt neuen Benutzer oder verändert ihn
+ *      3. Create User --> Initialisiert die Erstellung des Benutzers (Formatiert das Datume und erstellt den Querry-String)
+ *      4. Handling Time --> Alle Funktionen zu den TimePicker
+ *      5. Print Handling --> Macht das Word Dokument und Druckt es beim Standard Drucker des Gerätes
+ *      6. Not Implemented --> Noch nicht fertige Code Stücke / entfernte Code stücke
+ */
+
+
+using System;
 using System.Threading;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
@@ -10,10 +27,32 @@ namespace APGSGA_GPP_App
 {
     public partial class Form1 : Form
     {
+
+        //Alle Variablen, die Benötigt werden
+        #region Variables
+
+        //Define The Word Path
+        private string fileName = @"C:\temp\Gast_WLAN.docx";
+
+        //Define the Document and Open the Document with invisible Word
+        private Microsoft.Office.Interop.Word.Application word = new Microsoft.Office.Interop.Word.Application { Visible = false };
+        private Microsoft.Office.Interop.Word.Document doc;
+
+        #endregion
+
+        //Initialisiert das Windows-Form Fenster
+        #region Init
+
+        //Initalise the Components
         public Form1()
         {
             InitializeComponent();
         }
+
+        #endregion
+
+        //verändert und erstellt Benutzer (Benutzer = Benutzernamen & Passwort)
+        #region Add and Change User
 
         public void Adduser()
         {
@@ -37,6 +76,11 @@ namespace APGSGA_GPP_App
             this.PW_TB.Text = user.Password;
             this.PW_TB.Refresh();
         }
+
+        #endregion
+
+        //Initialisert den Querry-String und das Drucken des Benutzers
+        #region Create and Format the User
 
         private void Create_B_Click(object sender, EventArgs e)
         {
@@ -128,6 +172,11 @@ namespace APGSGA_GPP_App
             }
         }
 
+        #endregion
+
+        //Alle Funktionen zu den TimePicker
+        #region Handling Time
+
         private void dTP_Von_ValueChanged(object sender, EventArgs e)
         {
             //Add A User
@@ -185,7 +234,10 @@ namespace APGSGA_GPP_App
             dTP_Bis.MinDate = dTP_Von.Value.Date;
         }
 
-        private string fileName = @"C:\temp\Gast_WLAN.docx";
+        #endregion
+
+        //Druckt den Benutzer
+        #region Print Handling
 
         public void print(string username, string password)
         {
@@ -248,10 +300,6 @@ namespace APGSGA_GPP_App
             printDocument();
         }
 
-        //Define the Document and Open the Document with invisible Word
-        private Microsoft.Office.Interop.Word.Application word = new Microsoft.Office.Interop.Word.Application { Visible = false };
-        private Microsoft.Office.Interop.Word.Document doc;
-
         private void printDocument()
         {
             //If Doc is not defined Open it first.
@@ -292,7 +340,13 @@ namespace APGSGA_GPP_App
             }
 
             //Document Printed
+            MessageBox.Show("Benutzer erfolgreich erstellt");
         }
+
+        #endregion
+
+        //Angefangener Code
+        #region Not Implemented
 
         private void button1_Click(object sender, EventArgs e)
         {
@@ -300,5 +354,7 @@ namespace APGSGA_GPP_App
             Thread thread = new Thread(Program.showLoop);
             thread.Start();
         }
+
+        #endregion
     }
 }

@@ -1,4 +1,15 @@
-﻿using System;
+﻿//Header
+//Verison: 1.0
+//Author: Jann Erhardt
+//Discription: 
+/* 
+ * Sammlung von Daten, um alles zu Strukturieren
+ * 
+ * Funktionen: 
+ *      1. Variable generation --> Erstellt den Benutzer (Benutzernamen & Passwort)
+ */
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,8 +20,17 @@ namespace APGSGA_GPP_App
 {
     class User
     {
+
+        //Alle Variablen
+        #region Variablen
+
         public string Username = CreateUsername();
         public string Password = CreatePW();
+
+        #endregion
+
+        //Die Erstellung der Variablen
+        #region Variable generation
 
         //A String for the Password
         static string CreatePW(int length = 8)
@@ -76,5 +96,8 @@ namespace APGSGA_GPP_App
             end = Program.Gast + end;
             return end;
         }
+
+        #endregion
+
     }
 }

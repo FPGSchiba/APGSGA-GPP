@@ -1,4 +1,17 @@
-﻿using System;
+﻿//Header
+//Verison: 1.0
+//Author: Jann Erhardt
+//Discription: 
+/* 
+ * Der Haupt eintritts Punkt des Programms
+ * 
+ * Funktionen: 
+ *      1. Init --> Initialisiert alle Komonenten (Form1 Designer -> Generierter Code)
+ *      2. Login-Send --> Speichert die Felder und schickt sie Program.cs, um das zu überprüfen
+ *      3. reset --> Wenn das Login Falsch war werden die Text-Felder geleert
+ */
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -12,10 +25,19 @@ namespace APGSGA_GPP_App
 {
     public partial class login : Form
     {
+        //Initialisiert das Windows-Form Fenster
+        #region Init
+
+        //Initalise the Components
         public login()
         {
             InitializeComponent();
         }
+
+        #endregion
+
+        //Login betätigt Infos weiterleiten
+        #region Login-Send
 
         private void button1_Click(object sender, EventArgs e)
         {
@@ -36,6 +58,11 @@ namespace APGSGA_GPP_App
             }
         }
 
+        #endregion
+
+        //Die Felder leeren
+        #region reset
+
         public void resetLogin()
         {
             tB_User.Text = "";
@@ -43,5 +70,7 @@ namespace APGSGA_GPP_App
             tB_User.Refresh();
             tB_Pass.Refresh();
         }
+
+        #endregion
     }
 }

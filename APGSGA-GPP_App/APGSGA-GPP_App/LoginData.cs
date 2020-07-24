@@ -1,4 +1,15 @@
-﻿using System;
+﻿//Header
+//Verison: 1.0
+//Author: Jann Erhardt
+//Discription: 
+/* 
+ * Sammlung von Daten, um alles zu Strukturieren
+ * 
+ * Funktionen: 
+ *      1. Variable generation --> Erstellt den Dictionary, um sich einzuloggen
+ */
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,9 +19,17 @@ namespace APGSGA_GPP_App
 {
     class LoginData
     {
+        //Alle Variablen
+        #region Variables
+
         public Dictionary<string, string> dic_login = CreateValidation();
 
+        #endregion
 
+        //Die Erstellung der Variablen
+        #region Variable generation
+
+        // Create a Directory for the Usernames and Hashed passwords
         public static Dictionary<string, string> CreateValidation()
         {
             Dictionary<string, string> dic = new Dictionary<string, string>();
@@ -22,5 +41,8 @@ namespace APGSGA_GPP_App
 
             return dic;
         }
+
+        #endregion
+
     }
 }

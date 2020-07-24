@@ -54,5 +54,3 @@ Wenn der Benutzer dann den Benutzernamen und das Passwort eingegeben hat sendet 
 Dort wird mithilfe der Daten von der Klasse `LoginData`, welche alle Benutzernamen und Passwörter in einem `Dictionary` festhaltet. 
 Wenn dann der Login Validiert ist startet die Appliaktion die Form `Form1`, als Hauptfenster der Applikation. 
 
-
-######

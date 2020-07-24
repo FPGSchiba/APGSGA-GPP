@@ -16,8 +16,8 @@ namespace APGSGA_GPP_App
             try
             {
                 //Checking the XML for known Errors
-                Program.checkXML();
-                Program.deleteOldUser();
+                //Program.checkXML();
+                //Program.deleteOldUser();
             }
             catch(Exception E)
             {
@@ -103,7 +103,7 @@ namespace APGSGA_GPP_App
                     string usern = dataGridView1.Rows[e.RowIndex].Cells["Benutzernamen"].Value.ToString();
 
                     //Then the user will be deleted
-                    Program.deleteUser(usern);
+                    //Program.deleteUser(usern);
 
                     //The Form gets closed
                     Form.ActiveForm.Close();

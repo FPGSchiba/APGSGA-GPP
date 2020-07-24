@@ -59,8 +59,8 @@ namespace APGSGA_GPP_App
             Program.sendData(show);
 
             //Update XML to show the created users
-            Thread thread = new Thread(() => Program.addAccess(username, password, formatTime(dateVon, true), formatTime(dateBis, false)));
-            thread.Start();
+            //Thread thread = new Thread(() => Program.addAccess(username, password, formatTime(dateVon, true), formatTime(dateBis, false)));
+            //thread.Start();
         }
 
         public static string formatTime(string Time, bool isBis)

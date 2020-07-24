@@ -1,13 +1,14 @@
 ﻿using Renci.SshNet;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
+using System.Security.Cryptography;
+using System.Text;
+using System.Diagnostics;
 using System.Text.RegularExpressions;
-using System.Xml;
-using System.Xml.Linq;
+using Microsoft.VisualBasic;
 
 namespace APGSGA_GPP_App
 {
@@ -23,24 +24,24 @@ namespace APGSGA_GPP_App
 
         //The Information to connect to the Server
         public static string host = "192.168.5.11";
-        public static string user = "admin";
-        public static string pwd = "passw0rd";
+        public static string user { get; private set; }
+        public static string pwd { get; private set; }
+        private static string Gast;
+        public static Dictionary<string, string> dic_login = new Dictionary<string, string>();
 
         //File location
         public static string localXML = @"C:\temp\Users.xml";
 
         static void Main(string[] args)
         {
-            //Make a Thread for the MainLoop
-            Thread thread = new Thread(MainLoop);
+            //Add the usernames and Passwords
+            dic_login.Add("zhg", "c47a2624a4d01589f9696f3bb45cff8a");
+            dic_login.Add("admin", "bed128365216c019988915ed3add75fb");
+            dic_login.Add("hotline", "b0700b31ce0c29f134059ebda6516ad8");
+
+            //Make the Login-Loop
+            Thread thread = new Thread(loginLoop);
             thread.Start();
-
-            //wait for GUI before try to write a username and a Password
-            Thread.Sleep(5000);
-
-            //Initiate Username and Password
-            GenerateUser();
-            GeneratePW();
         }
 
         public static void setMinDate()
@@ -107,6 +108,13 @@ namespace APGSGA_GPP_App
             Application.Run(new Form2());
         }
 
+        public static void loginLoop()
+        {
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(new login());
+        }
+
         //A String for the Password
         static string CreatePW(int length = 8)
         {
@@ -168,7 +176,7 @@ namespace APGSGA_GPP_App
             }
 
             //Format String
-            end = "Gast" + end;
+            end = Gast + end;
             return end;
         }
 
@@ -194,163 +202,14 @@ namespace APGSGA_GPP_App
             }
         }
 
-        //clean up code
-        static void deleteXML()
-        {
-            if (File.Exists(localXML))
-            {
-                File.Delete(localXML);
-            }
-        }
-
         //get the information about the current users
         public static string getXMLcontent()
         {
             string ret = "";
 
-            if (!File.Exists(localXML))
-            {
-                newXML();
-            }
-
-            ret = File.ReadAllText(localXML);
-
             return ret;
         }
 
-        public static void addAccess(string usern, string passwd, string startDate, string endDate)
-        {
-            checkXML();
-
-            //Get the content of the current XML
-            string completeXML = getXMLcontent();
-
-            //Make the XMl ready to Write
-            string temp = Regex.Replace(completeXML, @"<\/guestwlan>", "");
-
-            //Check if there is a base Structure
-            if (completeXML == "")
-            {
-                //No base structure --> Create new one
-                newXML();
-            }
-            else
-            {
-                //It has a base structure --> Write the string temp on it
-                File.WriteAllText(localXML, temp);
-            }
-
-            //Get current Time and create a string from it
-            string month = DateTime.Now.Month.ToString("D2");
-            string day = DateTime.Now.Day.ToString("D2");
-            string year = DateTime.Now.Year.ToString("D4");
-            string hrs = DateTime.Now.Hour.ToString("D2");
-            string mins = DateTime.Now.Minute.ToString("D2");
-            string secs = DateTime.Now.Second.ToString("D2");
-            string creation = month + "/" + day + "/" + year + " " + hrs + ":" + mins + ":" + secs;
-
-            //write the File with a new row
-            using(var sw =  File.AppendText(localXML))
-            {
-                sw.WriteLine("    <row>");
-                sw.WriteLine($"        <guest_username>{usern}</guest_username>");
-                sw.WriteLine($"        <guest_password>{passwd}</guest_password>");
-                sw.WriteLine($"        <creation_date>{creation}</creation_date>");
-                sw.WriteLine($"        <end_date>{endDate}</end_date>");
-                sw.WriteLine($"        <start_date>{startDate}</start_date>");
-                sw.WriteLine("    </row>");
-                sw.Write("</guestwlan>");
-                sw.Close();
-            }
-        }
-
-        //If the File is Empty create a base structure
-        static void newXML()
-        {
-            //Create Dictionary if it is not existing
-            if (!Directory.Exists(@"C:\temp"))
-            {
-                Directory.CreateDirectory(@"C:\temp");
-            }
-
-            //Initalise the File
-            File.WriteAllText(localXML, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<guestwlan>\n</guestwlan>\n");
-        }
-
-        //deleting Old Users
-        public static void deleteOldUser()
-        {
-            try
-            {
-                //Open the Document
-                XmlDocument xDoc = new XmlDocument();
-                xDoc.Load(localXML);
-
-                //Search for the Dates where the User ends
-                XmlNodeList creations = xDoc.GetElementsByTagName("end_date");
-                List<string> dates = new List<string>();
-
-                //Addd to a list all times
-                foreach (XmlNode creation in creations)
-                {
-                    dates.Add(creation.InnerText);
-                }
-
-                foreach (string date in dates)
-                {
-                    //Parse the Time to a DateTime
-                    DateTime temp = DateTime.Parse(formatDateTime(date));
-
-                    //Test if the User is outdated
-                    if (temp < DateTime.Now)
-                    {
-                        try
-                        {
-                            //Using the XML-Library to Parse out the date and delete the Row where its in
-                            var xml = File.ReadAllText(localXML);
-                            XDocument doc = XDocument.Parse(xml);
-                            doc.Descendants().Elements("row").Where(x => x.Element("end_date")?.Value == date).Remove();
-                            var result = doc.ToString();
-
-                            //Generate the Varables out of the Date
-                            string[] vs;
-                            string end = "";
-                            string userDate = formatDateTime(date);
-                            string[] tempp = userDate.Split(' ');
-
-                            //Parse the Date
-                            vs = tempp[0].Split('.');
-                            string year = vs[2];
-                            char[] temps = year.ToCharArray();
-                            year = temps[2].ToString() + temps[3].ToString();
-                            vs[2] = year;
-                            foreach (string i in vs)
-                            {
-                                end += Int32.Parse(i).ToString("D2");
-                            }
-
-                            //Format String
-                            end = "Gast" + end;
-
-                            //delete The User on the Server
-                            delUser(end);
-
-                            //Write the new File
-                            File.WriteAllText(localXML, result);
-                        }
-                        catch (Exception e)
-                        {
-                            //handling errors while Parsing
-                            MessageBox.Show("XML ist doof: " + e.Message);
-                        }
-                    }
-                }
-            }
-            catch
-            {
-                //nothing
-            }
-        }
 
         //Format back to DateTime
         static string formatDateTime(string Date)
@@ -389,6 +248,14 @@ namespace APGSGA_GPP_App
                     SshCommand sc = client.CreateCommand($"ocal-userdb-guest del username \"{usern}\"");
                     sc.Execute();
                     string antewort = sc.Result;
+                    if(antewort == "")
+                    {
+
+                    }
+                    else
+                    {
+                        MessageBox.Show(antewort);
+                    }
                     client.Disconnect();
                 }
             }
@@ -399,40 +266,123 @@ namespace APGSGA_GPP_App
             }
         }
 
-        public static void deleteUser(string usern)
+        //Get the MD5-Hash code from a string
+        public static string MD5Hash(string input)
         {
-            //Using the XML-Library to Parse out the date and delete the Row where its in
-            var xml = File.ReadAllText(localXML);
-            XDocument doc = XDocument.Parse(xml);
-            doc.Descendants().Elements("row").Where(x => x.Element("guest_username")?.Value == usern).Remove();
-            var result = doc.ToString();
+            //Translate string to bytes
+            StringBuilder hash = new StringBuilder();
+            MD5CryptoServiceProvider md5provider = new MD5CryptoServiceProvider();
+            byte[] bytes = md5provider.ComputeHash(new UTF8Encoding().GetBytes(input));
 
-            //delete The User on the Server
-            delUser(usern);
-
-            //Write the new File
-            File.WriteAllText(localXML, result);
+            //Write the Hex for the bytes
+            for (int i = 0; i < bytes.Length; i++)
+            {
+                hash.Append(bytes[i].ToString("x2"));
+            }
+            return hash.ToString();
         }
 
-        //Checking for prblems in the XML
-        public static void checkXML()
+
+        public static void validateLogin(string password, string username)
         {
-            //Get the content
-            string content = getXMLcontent();
-            
-            //If everything is deleted make a new structure
-            if(content == "<guestwlan />")
+            bool validate;
+            try
             {
-                File.WriteAllText(localXML, Regex.Replace("<?xml version =\"1.0\" encoding=\"UTF-8\"?>\n<guestwlan>\n" + content, "<guestwlan />", "</guestwlan>"));
-                content = Regex.Replace("<?xml version =\"1.0\" encoding=\"UTF-8\"?>\n<guestwlan>\n" + content, "<guestwlan />", "</guestwlan>");
+                validate = dic_login[username] == MD5Hash(password);
+            }
+            catch
+            {
+                validate = false;
+
+                //Makes a cross-thread action to reset the Login Information
+                if (Application.OpenForms["login"] != null)
+                {
+                    Application.OpenForms["login"].Invoke(new Action(() => {
+
+                        (Application.OpenForms["login"] as login).resetLogin();
+
+                    }));
+                }
             }
 
-            //Check if we should better delete it and make a new File
-            if(content == "")
+            if(validate)
             {
-                File.Delete(localXML);
-                newXML();
+                //Set username and Password for connecting to the server
+                user = username;
+                pwd = password;
+
+                //Close Login
+                Form.ActiveForm.Close();
+
+                //Make a Thread for the MainLoop
+                Thread thread = new Thread(MainLoop);
+                thread.Start();
+
+                //Wait til the Program has started
+                string temp = ".0.";
+                while(temp == ".0.")
+                {
+                    if (Application.OpenForms["Form1"] != null)
+                    {
+                        Application.OpenForms["Form1"].Invoke(new Action(() => {
+
+                            temp = (Application.OpenForms["Form1"] as Form1).dTP_Von_GetTime();
+
+                        }));
+                    }
+                }
+
+                //Init the Username and Password
+                wrigthGuest();
+                GenerateUser();
+                GeneratePW();
             }
+            else
+            {
+                MessageBox.Show("Falsches oder nicht bekanntes Login.");
+            }
+        }
+
+        //Making an Other Username per Login
+        private static void wrigthGuest()
+        {
+            string komplett = Environment.MachineName;
+
+            if(Regex.IsMatch(komplett, @"[CL][LA][A-Z]{3}\d{9}"))
+            {
+                komplett = Regex.Replace(komplett, "^[CL][LA]", "");
+                komplett = Regex.Replace(komplett, @"\d{9}$", "");
+                Gast = komplett;
+            }
+            else
+            {
+                string response = Interaction.InputBox("Für welchen Standort benötigsts du einen Benutzer?", "Standort", "ZHG");
+                Gast = response;
+            }
+        }
+
+        //Optional (not implemented yet
+        public static void writeXML()
+        {
+            var psi = new ProcessStartInfo();
+            psi.FileName = @"C:\Program Files (x86)\Microsoft Visual Studio\Shared\Python36_64\python.exe";
+            var script = @"C:\temp\GetXML.py";
+            psi.Arguments = $"\"{script}\"";
+            psi.UseShellExecute = false;
+            psi.CreateNoWindow = true;
+            psi.RedirectStandardOutput = true;
+            psi.RedirectStandardError = true;
+
+            var errors = "";
+            var results = "";
+            using(var process = Process.Start(psi))
+            {
+                errors = process.StandardError.ReadToEnd();
+                results = process.StandardOutput.ReadToEnd();
+            }
+
+            MessageBox.Show(errors);
+            MessageBox.Show(results);
         }
     }
 }

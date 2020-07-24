@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("APGSGA Allgemeine Plakatgesellschaft")]
-[assembly: AssemblyProduct("APGSGA-GPP_App")]
+[assembly: AssemblyProduct("Gest-Zugang App")]
 [assembly: AssemblyCopyright("Copyright ©  2020")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

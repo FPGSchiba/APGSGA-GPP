@@ -7,21 +7,17 @@
 <p>Um das App und all seine Feature richtig Nutzen zu können muss man Zugang zum LAN von APG haben.
 Ansonsten kann man das App und seine Features nicht nutzen. </p>
 
-<h4></h4>
-
 <p>Auch ist es von Vorteil einen Drucker zu ahben,
 denn ohne Drucker muss man sich den Benutzer und sein Passwort von selber aufschreiben oder es sich merken.
 Das Programm Druckt automatisch über den Durcker, der als Standard Drucker für das Gerät, aufdem das Programm installiert ist.</p>
-
-<h4></h4>
 
 <p>Auch braucht man, um sich bei diesem App einzuloggen einen Benutzer und ein Passwort.
 Dieser Benutzername und Passwort sollten Sie erhalten haben, wenn nicht schauen Sie im 
 APG Wiki nach, dort sollte eine Anleitung zum erstellen eines Gast-Benutzer vorhanden sein.</p>
 
-<h2 id="installation">Installation</h2>
+<h2>Installation</h2>
 
-<h4 id="bercluebiz">Über Cluebiz</h4>
+<h4>Über Cluebiz</h4>
 
 <ul>
 <li>Cluebiz?</li>
@@ -38,17 +34,66 @@ APG Wiki nach, dort sollte eine Anleitung zum erstellen eines Gast-Benutzer vorh
  im Ordner "APGSGA-GPP_App" zu entpacken und dort die datei "setup.exe" auf Ihrem Windows PC
  laufen zu lassen, indem Sie auf die Datei Doppelclicken.</p>
 
-<h2 id="dokumentation">Dokumentation</h2>
+<h2>Anleitung</h2>
+<ol>
+
+<li>
+
+Starten Sie die APP: <code>APGSGA-GPP_APP</code>
+
+<div style="text-align:left"><img src="APGSGA_APP.jpg" alt="APGSGA-GPP_APP"/></div>
+
+</li>
+
+<li>
+
+Melden Sie sich mit Ihren Anmelde Daten an.
+
+<div style="text-align:left"><img src="login.png" alt="Form: login.cs"/></div>
+
+</li>
+
+<li>
+
+Geben Sie den Benutzernamen und Passwort ein, falls Sie etwas an dem Vorgeschlagenem Benutzer ändern wollen.
+
+<div style="text-align:left"><img src="form1_Benutzer.png" alt="Form: Form1.cs Benutzer markiert"/></div>
+
+</li>
+
+<li>
+
+Wählen Sie das Datum aus, von wann bis wann der Benutzer aktiv sein soll.
+
+<div style="text-align:left"><img src="form1_Date.png" alt="Form: Form1.cs Datum markiert"/></div>
+
+</li>
+
+<li>
+
+Drücken Sie auf Create and Print.
+
+<div style="text-align:left"><img src="form1_Create.png" alt="Form: Form1.cs Create markiert"/></div>
+
+</li>
+
+<li>Das Dokument mit den Anmelde Daten wird jetzt in Ihrem Standard-Drucker gedruckt.</li>
+
+<li>Geben Sie das Dokument Ihrem Gast.</li>
+
+</ol>
+
+<h2>Dokumentation</h2>
 
 <p>Die Dokumentation ist eine Übersicht der Files und Funktionen, welche ich in diesem Projekt entwickelt habe.
  Ich empfehle, jedem, der wissen will, wie das Programm Funktioniert und eine Grundlegende Ahnung hat von Programmieren
  diese Dokumentation zu lesen. Es ist kein muss diese Dokumentation zu lesen, wenn man das know how nicht hat oder keine lust dazu.</p>
 
-<h3 id="grundlegendes">Grundlegendes</h3>
+<h3>Grundlegendes</h3>
 
 <p>Dieses App wude mithilfe von Visual Studio 2017, als eine Windows-Forms Applikation entwickelt und besitzt 3 Forms und 3 andere Classes.</p>
 
-<h5 id="dieforms">Die Forms:</h5>
+<h4>Die Forms:</h4>
 
 <ol>
 <li>Form1 - Das eigentliche Hauptprogramm, also das Main-GUI der Applikation</li>
@@ -58,7 +103,7 @@ APG Wiki nach, dort sollte eine Anleitung zum erstellen eines Gast-Benutzer vorh
 <li>Form2 - Das GUI, für die Daten-Anzeige, also dieses GUI wird im moment (Stand 24.07.2020) nicht benutzt dient aber, um die erstellten Benutzer anzeigen zu können.</li>
 </ol>
 
-<h5 id="dieklassen">Die Klassen:</h5>
+<h4>Die Klassen:</h4>
 
 <ol>
 <li>Program - Der Eintrittspunkt der Applikation, also das haupt Script.</li>
@@ -75,7 +120,7 @@ APG Wiki nach, dort sollte eine Anleitung zum erstellen eines Gast-Benutzer vorh
 <p>Das Script Program.cs ist der Eintritts Punkt der Applikation. Um mit Windows-Forms arbeiten zu können, müssen die Forms in einen Loop eingebettet werden.
 Dieses Script öffnet als erstes natürlich den <code>loginLoop</code>, also öffnet es in einem Thread die Form <code>login.cs</code>:</p>
 
-<pre><code class="language-c#">        static void Main(string[] args)
+<pre><code>        static void Main(string[] args)
         {
             //Make the Login-Loop
             Thread thread = new Thread(loginLoop);
@@ -83,12 +128,16 @@ Dieses Script öffnet als erstes natürlich den <code>loginLoop</code>, also öf
         }
 </code></pre>
 
-<h5></h5>
+<div style="text-align:center"><img src="login.png" alt="Form: login.cs"/></div>
 
 <p>Wenn der Benutzer dann den Benutzernamen und das Passwort eingegeben hat sendet die Form <code>login.cs</code> den eingegebenen Benutzernamen und das Passwort zurück ans <code>Program.cs</code>.
 Dort wird mithilfe der Daten von der Klasse <code>LoginData</code>, welche alle Benutzernamen und Passwörter in einem <code>Dictionary</code> festhaltet. 
 Wenn dann der Login Validiert ist startet die Appliaktion die Form <code>Form1</code>, als Hauptfenster der Applikation. </p>
 
-<h5 id="-3"></h5>
+<div style="text-align:center"><img src="form1.png" alt="Form: form1.cs" /></div>
 
-<p></p>
+<p>Wenn die Form dann gstartet ist, was immer etwa 2 Sekunden braucht generiert das Script <code>Program.cs</code> schon den ersten Benutzer, wenn ich von
+Benutzer rede, meine ich immer einen Benutzernamen und ein Passwort, dass die Klasse <code>User.cs</code> bereitstellt. Unterhalb des Users sieht man auch
+eine Zeitspanne, also zwei <code>DatePicker</code>, eines Von und das andere Bis.</p>
+
+<p>Wenn man jetzt einen Benutzer erstellen möchte Drückt man auf den </p>

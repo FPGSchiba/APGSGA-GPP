@@ -115,7 +115,7 @@ Drücken Sie auf Create and Print.
 
 <h3>Scripts</h3>
 
-<h4>Program</h4>
+<h4>Allgemeiner Ablauf</h4>
 
 <p>Das Script Program.cs ist der Eintritts Punkt der Applikation. Um mit Windows-Forms arbeiten zu können, müssen die Forms in einen Loop eingebettet werden.
 Dieses Script öffnet als erstes natürlich den <code>loginLoop</code>, also öffnet es in einem Thread die Form <code>login.cs</code>:</p>
@@ -140,4 +140,44 @@ Wenn dann der Login Validiert ist startet die Appliaktion die Form <code>Form1</
 Benutzer rede, meine ich immer einen Benutzernamen und ein Passwort, dass die Klasse <code>User.cs</code> bereitstellt. Unterhalb des Users sieht man auch
 eine Zeitspanne, also zwei <code>DatePicker</code>, eines Von und das andere Bis.</p>
 
-<p>Wenn man jetzt einen Benutzer erstellen möchte Drückt man auf den </p>
+<p>Wenn man jetzt einen Benutzer erstellen möchte Drückt man auf den Button Create and Print:</p>
+
+<div style="text-align:left"><img src="form1_Create.png" alt="Form: Form1.cs Create markiert"/></div>
+
+<p>Dann werden 2 Threads generiert, auf  dem ersten wird ein Querry-String generiert, der z.B. so aussehen kann: <code>local-userdb-guest add username "TestUser" password "pjox7856" start-time 07/08/2020 16:29 expiry time 07/08/2020 18:00</code>
+mit diesem Querry-String wird ein neuer Benutzer generiert, der <code>TestUser</code> heisst, mit dem passwort <code>pjox7856</code>, der am <code>07/08/2020 16:29</code>
+gültig wird und am <code>07/08/2020 18:00</code> wieder ungültig ist. Auf dem 2. Thread wird dann gedruckt, also mithilfe der Microsoft.Office.Interop.Word
+Library wird ein Word generiert, dass so aussieht:</p>
+
+<div style="text-align:left"><img src="Word.png" alt="Ouput Word"/></div>
+
+<h4>Program.cs</h4>
+
+<p>Die Klasse <code>Program.cs</code> besteht grob gesagt aus 6 Punkten:</p>
+
+<ol>
+
+<li>Main - Der Eintrittspunkt, den wir oben im Code beispiel schon gesehen haben.</li>
+
+<li>Die Loops - Alle Loops, die Benötigt werden, also einen Pro Form: <code>MainLoop()</code>, <code>showLoop()</code> und <code>loginLoop()</code>.</li>
+
+<li>Querry - Dieser Funktion kann man einen String mitgeben, welchen Sie dann mit den Login Informationen, die man beim <code>loginLoop()</code> eingeben musste, auf dem Server ausführt.</li>
+
+<li>
+    Login Validation - Das sind zwei Funktionen, die Verantwortlich dafür sind, dass man sich einloggen kann:
+
+<ul>
+<li>Als erstes einen String, der dir den MD5-Hash eines Strings zurück gibt. Diese Funktion wird für die Passwort Validierung benötigt.</li>
+<li>Als zweites eine Funktion, die mithilfe der <code>LoginData.cs</code> Klasse die Login Informationen überprüft und die Initialisierung des <code>MainLoops</code> beginnt.</li>
+</ul>
+
+</li>
+
+<li>Dann noch eine Funktion, die den <code>MainLoop</code> Initialisiert. Also Sie nimmt aus dem Computernamen den Standort und setzt so eine Variable, die zum herleiten des benutzernamens verwendet wird.
+Dann Initialisiert Sie, dass ein Benutzer erstellt wird.</li>
+
+<li>Als letztes gibt es noch zwei Funktionen, die noch keine Wirkung haben, da sie nur Ansätze sind und nicht verwendet werden.</li>
+
+</ol>
+
+<h4>User.cs</h4>

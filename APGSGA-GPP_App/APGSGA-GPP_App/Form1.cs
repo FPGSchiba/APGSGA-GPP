@@ -268,7 +268,7 @@ namespace APGSGA_GPP_App
             string title = "Gast Zugang APGSGA";
             string wlanName = "WLAN-Name: APG-Guest" + Environment.NewLine;
             string user = $"Benutzernamen: {username}" + Environment.NewLine;
-            string passwd = $"Passwort: {password}" + Environment.NewLine;
+            string passwd = $"Passwort: {password}";
 
             //Formatting Title  
             Formatting titleFormat = new Formatting(); 

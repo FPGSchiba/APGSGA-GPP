@@ -25,6 +25,17 @@ namespace APGSGA_GPP_App
             Program.validateLogin(password, username);
         }
 
+        private void login_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                string password = tB_Pass.Text;
+                string username = tB_User.Text;
+
+                Program.validateLogin(password, username);
+            }
+        }
+
         public void resetLogin()
         {
             tB_User.Text = "";

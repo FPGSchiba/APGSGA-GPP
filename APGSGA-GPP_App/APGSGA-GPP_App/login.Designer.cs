@@ -52,6 +52,7 @@
             this.tB_Pass.Size = new System.Drawing.Size(183, 20);
             this.tB_Pass.TabIndex = 1;
             this.tB_Pass.UseSystemPasswordChar = true;
+            this.tB_Pass.KeyDown += new System.Windows.Forms.KeyEventHandler(this.login_KeyDown);
             // 
             // label1
             // 
@@ -102,8 +103,11 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.tB_Pass);
             this.Controls.Add(this.tB_User);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.KeyPreview = true;
             this.Name = "login";
-            this.Text = "login";
+            this.Text = "Log In";
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.login_KeyDown);
             this.ResumeLayout(false);
             this.PerformLayout();
 

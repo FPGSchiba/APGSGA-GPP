@@ -26,14 +26,14 @@ namespace APGSGA_GPP_App
             }
 
             //Get the XML-Content and Format and read it correctly
-            string temp = Program.getXMLcontent();
-            temp = formatXML(temp);
-            System.IO.StringReader xml = new System.IO.StringReader(temp);
+            //string temp = Program.getXMLcontent();
+            //temp = formatXML(temp);
+            //System.IO.StringReader xml = new System.IO.StringReader(temp);
 
             try
             {
                 //Read the XML inside 
-                dataSet1.ReadXml(xml);
+                //dataSet1.ReadXml(xml);
             }
             catch(Exception E)
             {

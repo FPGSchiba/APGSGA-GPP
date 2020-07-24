@@ -15,30 +15,27 @@ namespace APGSGA_GPP_App
             InitializeComponent();
         }
 
-        public void WriteUser(string Username)
+        public void Adduser()
         {
-            //Set an extern Username
-            this.User_TB.Text = Username;
-            this.User_TB.Refresh();
-        }
-
-        public void WritePW(string Password)
-        {
-            //Set an extern Password
-            this.PW_TB.Text = Password;
+            User user = new User();
+            this.PW_TB.Text = user.Password;
             this.PW_TB.Refresh();
+            this.User_TB.Text = user.Username;
+            this.User_TB.Refresh();
         }
 
         private void User_Gene_Click(object sender, EventArgs e)
         {
-            //Generate Username
-            Program.GenerateUser();
+            User user = new User();
+            this.User_TB.Text = user.Username;
+            this.User_TB.Refresh();
         }
 
         private void PW_Gene_Click(object sender, EventArgs e)
         {
-            //Generate Password
-            Program.GeneratePW();
+            User user = new User();
+            this.PW_TB.Text = user.Password;
+            this.PW_TB.Refresh();
         }
 
         private void Create_B_Click(object sender, EventArgs e)
@@ -133,9 +130,8 @@ namespace APGSGA_GPP_App
 
         private void dTP_Von_ValueChanged(object sender, EventArgs e)
         {
-            //Generate a new User
-            Program.GenerateUser();
-            Program.GeneratePW();
+            //Add A User
+            Adduser();
 
             //Debug minDate
             dTP_Bis.MinDate = dTP_Von.Value.Date;

@@ -48,13 +48,11 @@ Dieses Script öffnet als erstes natürlich den `loginLoop`, also öffnet es in 
             thread.Start();
         }
 ```
-<div style="text-align:center"><img src="login.png" alt="Form: login.cs" /></div>
 
 ######
 Wenn der Benutzer dann den Benutzernamen und das Passwort eingegeben hat sendet die Form `login.cs` den eingegebenen Benutzernamen und das Passwort zurück ans `Program.cs`.
 Dort wird mithilfe der Daten von der Klasse `LoginData`, welche alle Benutzernamen und Passwörter in einem `Dictionary` festhaltet. 
 Wenn dann der Login Validiert ist startet die Appliaktion die Form `Form1`, als Hauptfenster der Applikation. 
 
-<div style="text-align:center"><img src="form1.png" alt="Form: form1.cs" /></div>
 
 ######

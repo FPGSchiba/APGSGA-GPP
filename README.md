@@ -157,26 +157,49 @@ Library wird ein Word generiert, dass so aussieht:</p>
 
 <ol>
 
-<li>Main - Der Eintrittspunkt, den wir oben im Code beispiel schon gesehen haben.</li>
-
-<li>Die Loops - Alle Loops, die Benötigt werden, also einen Pro Form: <code>MainLoop()</code>, <code>showLoop()</code> und <code>loginLoop()</code>.</li>
-
-<li>Querry - Dieser Funktion kann man einen String mitgeben, welchen Sie dann mit den Login Informationen, die man beim <code>loginLoop()</code> eingeben musste, auf dem Server ausführt.</li>
-
-<li>
-    Login Validation - Das sind zwei Funktionen, die Verantwortlich dafür sind, dass man sich einloggen kann:
-
-<ul>
-<li>Als erstes einen String, der dir den MD5-Hash eines Strings zurück gibt. Diese Funktion wird für die Passwort Validierung benötigt.</li>
-<li>Als zweites eine Funktion, die mithilfe der <code>LoginData.cs</code> Klasse die Login Informationen überprüft und die Initialisierung des <code>MainLoops</code> beginnt.</li>
-</ul>
-
+<li>Variablen: 
+    <ul>
+        <li><code>public static string password</code> - das Passwort</li>
+        <li><code>public static string username</code> - Der Benutzername</li>
+        <li><code>public static string host</code> - Die Server IP</li>
+        <li><code>public static string user</code> - Der Benutzername für den Server</li>
+        <li><code>public static string pwd</code> - Das Passwort für den Server</li>
+        <li><code>public static string Gast</code> - Das Standortkürzel</li>
+        <li><code>public static LoginData login</code> - Die Klasse LoginData</li>
+        <li><code>public static string localXML</code> - Der Pfad zum Lokalen XML</li>
+    </ul>
 </li>
 
-<li>Dann noch eine Funktion, die den <code>MainLoop</code> Initialisiert. Also Sie nimmt aus dem Computernamen den Standort und setzt so eine Variable, die zum herleiten des benutzernamens verwendet wird.
-Dann Initialisiert Sie, dass ein Benutzer erstellt wird.</li>
+<li>Main: 
+    <ul>
+        <li><code>Main(string[] args)</code> - Startet den <code>loginLoop()</code></li>
+    </ul>
+</li>
 
-<li>Als letztes gibt es noch zwei Funktionen, die noch keine Wirkung haben, da sie nur Ansätze sind und nicht verwendet werden.</li>
+<li>Loops:
+    <ul><code>MainLoop()</code> - Der Loop für die Form1, also das Hauptprogramm.</ul>
+    <ul><code>showLoop()</code> - Der Loop für die Form2, also der Datenanzeige, die im Moment nicht verwendet wird (stand 03.08.2020)</ul>
+    <ul><code>loginLoop()</code> - Der Loop für die Form Login, also das Login Fenster.</ul>
+</li>
+
+<li>Querry:
+    <ul>    
+        <li><code>sendData(string Data)</code> - Die Funktion, um einen Querry-String auf dem Server auszuführen, mithilfe von Passwort und Benutzernamen vom Log In.</li>
+    </ul>
+</li>
+
+<li>Login Validation:
+    <ul>
+        <li><code>MD5Hash(string input)</code> - Ist ein String, der aus einem Input String einen MD5-Hash macht, indem er den string in Bytes übersetzt diese Hashed und dann zurück übersetzt.</li>
+        <li><code>validateLogin(string password, string username)</code> - Die Funktion, die Mithilfe der Klasse <code>LoginData.cs</code> das Login in der Form: <code>Login.cs</code> überprüft. Zum Abschluss Initialisiert diese Funktion dann auch noch den <code>MainLoop()</code>.</li>
+    </ul>
+</li>
+
+<li>Init MainLoop:
+    <ul>
+        <li><code>startMainLoop()</code> - Eine Funktion die das Standortkürzel aus dem Computernamen holt und in der Variable <code>string Gast</code> das Kürzel speichert. Auch generiert diese Funktion dann einen Benutzer und Debuged gleich das Datum, also die Funktion <code>debugMinDate()</code> von der Form: <code>Form1.cs</code> aufruft.</li>
+    </ul>
+</li>
 
 </ol>
 
@@ -212,6 +235,100 @@ Diese Klasse macht wirklich nicht mehr, als diese beiden Dinge zu speichern und 
     <li><code>CreateValidation()</code> - ein <code>Dictionary&lt;string, string></code>, der  die Benutzernamen und MD5 gehashte passwörter speichert.</li>
 </ul>
 
+</li>
+
+</ol>
+
+<h4>form1.cs</h4>
+
+<p>Das ist das eigentliche Programm, also die Haupt-Form. In dieser Form macht man neue Benutzer und Druckt diese.</p>
+
+<ol>
+
+<li>Variablen: 
+    <ul>
+        <li><code>private string fileName</code> ist die Variable, um das Word-Dokument zu speichern.</li>
+        <li><code>private Microsoft.Office.Interop.Word.Application word</code> das ist die Variable, um ein Objekt zu generieren, mitdem man die Word Applikation ausführen kann.</li>
+        <li><code>private Microsoft.Office.Interop.Word.Document doc;</code> das ist die Variable, um ein Objekt zu generieren, mitdem man ein Word erstellen kann.</li>
+    </ul>
+</li>
+
+<li>Init - Ist die Initialisierung, des Codes, der von dem Designer erstellt wurde. Also wird hier das ganze visuelle Initialisiert.</li>
+
+<li>Users:
+    <ul>
+        <li><code>Adduser()</code> - Eine Funktion, die einen neuen Benutzer generiert, also die Klasse <code>User</code> erstellt und dann in die Text-Felder schreibt.</li>
+        <li><code>User_Gene_Click(object sender, EventArgs e)</code> - ist eine Funktion, die einen neuen Benutzernamen generiert und in das Text-Fled hineinschreibt.</li>
+        <li><code>PW_Gene_Click(object sender, EventArgs e)</code> - ist eine Funktion, die ein neues Passwort generiert und das in das Text-Feld hineinschreibt.</li>
+    </ul>
+</li>
+
+<li>Create User:
+    <ul>
+        <li><code>Create_B_Click(object sender, EventArgs e)</code> - Erstellt den Querry-String, der dann auf dem Server ausgeführt wird, um einen Zugang zu erstellen. Dann ertsellt die Funktion 2 Threads, um 1. den Querry-String zu senden und 2. das ganze Auszudrucken.</li>
+        <li><code>formatTime(string Time, bool isBis)</code> - Formatiert das Datum richtig, damit der String beim Server auch erkannt wird.</li>
+        <li><code>formatMonth(string month)</code> - Das ist eine Funktion die den Monat, der als String angegeben ist, also z.B. Juli, zu einem Int umwandelt.</li>
+    </ul>
+</li>
+
+<li>Handling Time:
+    <ul>
+        <li><code>dTP_Von_ValueChanged(object sender, EventArgs e)</code> - Das ist eine Funktion, die Aufgerufen wird, wenn man das Von-Datum ändert und bewirkt, dass ein neuer Benutzer mit dem neuen Dateum erstellt wird. Auch setzt es das <code>minDate</code> vom Bis-Datum neu, sowie auch das Bis-Datum selber.</li>
+        <li><code>dTP_Von_GetTime()</code> - Eine Funktion, die Benötigt wird, um einen Benutzer zu erstellen, denn sie nimmt das Von-Datum und Formatiert es gleich richtig.</li>
+        <li><code>debugMinDate()</code> - Debugged das erste einloggen in Form1  so, dass man nicht weiter zurück kann mit Bis als das Von-Datum.</li>
+    </ul>
+</li>
+
+<li>Print Handling:
+    <ul>
+        <li><code>print(string username, string password)</code> - Diese Methode erstellt das Word-Dokument, welches dann zum Drucken verwendet wird und leitet dann die Druckmethode ein.</li>
+        <li><code>printDocument()</code> - Diese Methode Druckt das Word-Dokument.</li>
+    </ul>
+</li>
+</ol>
+
+<h4>form2.cs</h4>
+
+<p>Eine im moment (Stand: 03.08.2020) nicht verwendete Form, die zur veranschaulichung der Benutzer dienen soll.</p>
+
+<ol>
+
+<li>Init - Ist die Initialisierung, des Codes, der von dem Designer erstellt wurde. Also wird hier das ganze visuelle Initialisiert.</li>
+
+<li>load XML:
+    <ul>
+        <li><code>dataSet1_Initialized(object sender, EventArgs e)</code> - Ist die Funktion, die aufgerufen wird, wenn das <code>dataSet1</code> Initialisiert wird und lädt das XML in die tabelle hinein.</li>
+        <li><code>formatXML(string content)</code> - Diese Funktion Formatiert das XML so, dass es auch für nicht INformatiker leserlich ist.</li>
+    </ul>
+</li>
+
+<li>Buttons:
+    <ul>
+        <li><code>dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)</code> - Diese Funktion wird aufgerfuen, wenn man auf einen der Daten in der tabelle drückt, also ist das die Button-Funktion. Denn diese Funktion schaut, wo gelicked wurde und führt aktionen aus, wenn man auf die Knöpfe gedrückt hat. Also z.B. erkennt sie, wenn man auf den Löschen Knopf drückt und dann löscht sie den Benutzer oder wenn man auf den Drucken Knopf drückt Druckt sie den Benutzer.</li>
+    </ul>
+</li>
+
+</ol>
+
+<h4>Login.cs</h4>
+
+<p>Das ist die Form, welche verantwortlich ist, für das Log In.</p>
+
+<ol>
+
+<li>Init - Ist die Initialisierung, des Codes, der von dem Designer erstellt wurde. Also wird hier das ganze visuelle Initialisiert.</li>
+
+<li> Login-Send:
+    <ul>
+        <li><code>button1_Click(object sender, EventArgs e)</code> - Ist die Funktion, wenn man auf Login Drückt. Sie liest den Benutzernamen und das Passwort hinaus und sendet die Daten an die Validier Funktion im <code>Program.cs</code>.</li>
+        <li><code>login_KeyDown(object sender, KeyEventArgs e)</code> - Ist genau das gleiche wie: <code>button1_Click(object sender, EventArgs e)</code>, einfach wird das hier ausgelöst, wenn man [enter] drückt.</li>
+    </ul>
+</li>
+
+<li>reset:
+    <ul>
+        <li><code>resetLogin()</code> - Ist eine Funktion, die die Eingabe-Felder leert, wenn man der Log In gescheitert ist.</li>
+    </ul>
 </li>
 
 </ol>

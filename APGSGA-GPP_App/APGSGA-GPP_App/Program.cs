@@ -1,5 +1,5 @@
 ﻿//Header
-//Verison: 1.0
+//Verison: 1.1
 //Author: Jann Erhardt
 //Discription: 
 /* 
@@ -232,6 +232,7 @@ namespace APGSGA_GPP_App
                 Application.OpenForms["Form1"].Invoke(new Action(() => {
 
                     (Application.OpenForms["Form1"] as Form1).Adduser();
+                    (Application.OpenForms["Form1"] as Form1).debugMinDate();
 
                 }));
             }

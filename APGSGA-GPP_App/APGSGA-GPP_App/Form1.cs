@@ -1,5 +1,5 @@
 ﻿//Header
-//Verison: 1.0
+//Verison: 1.1
 //Author: Jann Erhardt
 //Discription: 
 /* 
@@ -94,10 +94,14 @@ namespace APGSGA_GPP_App
             string show = "local-userdb-guest add username " + username + " password " + password + " start-time " + formatTime(dateBis, true) + " expiry time " + formatTime(dateVon, false);
 
             //Print the Document
-            print(username, password);
+            Thread tprint = new Thread(() => print(username, password));
 
             //Send the querry String
-            Program.sendData(show);
+            Thread tsend = new Thread(() => Program.sendData(show));
+
+            //Start both Threads
+            tprint.Start();
+            tsend.Start();
 
             //Update XML to show the created users
             //Thread thread = new Thread(() => Program.addAccess(username, password, formatTime(dateVon, true), formatTime(dateBis, false)));
@@ -222,15 +226,9 @@ namespace APGSGA_GPP_App
             return end;
         }
 
-        private void dTP_Bis_ValueChanged(object sender, EventArgs e)
+        public void debugMinDate()
         {
-            //Function call to set bis MinDate
-            setMinDate_dTP_Bis();
-        }
-
-        public void setMinDate_dTP_Bis()
-        {
-            //Set bis MinDate equals to von Date
+            //Set the Mindate of Bis-Date to Von-Date
             dTP_Bis.MinDate = dTP_Von.Value.Date;
         }
 
@@ -240,12 +238,6 @@ namespace APGSGA_GPP_App
         #region Print Handling
 
         public void print(string username, string password)
-        {
-            Thread thread = new Thread(() => printMethod(username, password));
-            thread.Start();
-        }
-
-        void printMethod(string username, string password)
         {
             //Closing Open Files just in case
             Microsoft.Office.Interop.Word.Application word = (Microsoft.Office.Interop.Word.Application)System.Runtime.InteropServices.Marshal.GetActiveObject("Word.Application");
@@ -271,7 +263,7 @@ namespace APGSGA_GPP_App
             string passwd = $"Passwort: {password}";
 
             //Formatting Title  
-            Formatting titleFormat = new Formatting(); 
+            Formatting titleFormat = new Formatting();
             titleFormat.FontFamily = new Font("Seoge UI");
             titleFormat.Size = 26;
             titleFormat.Position = 40;
@@ -282,7 +274,7 @@ namespace APGSGA_GPP_App
 
             //Formatting Anderer Text
             Formatting textParagraphFormat = new Formatting();
-            textParagraphFormat.FontFamily = new Font("Seoge UI"); 
+            textParagraphFormat.FontFamily = new Font("Seoge UI");
             textParagraphFormat.Size = 14;
 
             //Insert text  

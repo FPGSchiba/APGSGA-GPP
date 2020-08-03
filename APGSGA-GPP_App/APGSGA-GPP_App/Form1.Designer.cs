@@ -90,7 +90,6 @@
             this.dTP_Bis.Name = "dTP_Bis";
             this.dTP_Bis.Size = new System.Drawing.Size(200, 20);
             this.dTP_Bis.TabIndex = 9;
-            this.dTP_Bis.ValueChanged += new System.EventHandler(this.dTP_Bis_ValueChanged);
             // 
             // label1
             // 

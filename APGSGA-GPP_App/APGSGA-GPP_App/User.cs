@@ -36,19 +36,26 @@ namespace APGSGA_GPP_App
         static string CreatePW(int length = 8)
         {
             string end = "";
-            length = length / 2;
+            try
+            {
+                length = length / 2;
+            }
+            catch
+            {
+                length = 4;
+            }
+            
             System.Random random = new System.Random();
 
             //generates a Password with the Strings underneath
-            const string numchars = "0123456789BCDEFGHIJKLMNOPQRSTUVWXYZ";
-            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            const string chars = "0123456789BCDEFGHIJKLMNOPQRSTUVWXYZ";
             List<string> randStr = new List<string>();
             for (int i = 0; i <= 2000; i++)
             {
                 string AlphaRandom = new string(Enumerable.Repeat(chars, length)
                   .Select(s => s[random.Next(s.Length)]).ToArray());
 
-                string NumberRandom = new string(Enumerable.Repeat(numchars, length)
+                string NumberRandom = new string(Enumerable.Repeat(chars, length)
                   .Select(s => s[random.Next(s.Length)]).ToArray());
 
                 if (randStr.Contains(AlphaRandom + NumberRandom))

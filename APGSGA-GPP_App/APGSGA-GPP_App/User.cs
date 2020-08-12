@@ -33,7 +33,7 @@ namespace APGSGA_GPP_App
         #region Variable generation
 
         //A String for the Password
-        static string CreatePW(int length = 8)
+        static string CreatePW(int length = 6)
         {
             string end = "";
             try
@@ -48,7 +48,7 @@ namespace APGSGA_GPP_App
             System.Random random = new System.Random();
 
             //generates a Password with the Strings underneath
-            const string chars = "0123456789BCDEFGHIJKLMNOPQRSTUVWXYZ";
+            const string chars = "123456789BCDEFGHIJKLMNPQRSTUVWXYZ";
             List<string> randStr = new List<string>();
             for (int i = 0; i <= 2000; i++)
             {

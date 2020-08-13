@@ -48,7 +48,7 @@ namespace APGSGA_GPP_App
             System.Random random = new System.Random();
 
             //generates a Password with the Strings underneath
-            const string chars = "123456789BCDEFGHIJKLMNPQRSTUVWXYZ";
+            const string chars = "123456789BCDEFGHJKLMNPQRSTUVWXYZ";
             List<string> randStr = new List<string>();
             for (int i = 0; i <= 2000; i++)
             {

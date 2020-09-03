@@ -33,7 +33,7 @@ namespace APGSGA_GPP_App
         #region Variable generation
 
         //A String for the Password
-        static string CreatePW(int length = 6)
+        static string CreatePW(int length = 8)
         {
             string end = "";
             try

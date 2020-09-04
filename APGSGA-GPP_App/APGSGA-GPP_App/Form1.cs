@@ -22,6 +22,7 @@ using System.Text.RegularExpressions;
 using Xceed.Words.NET;
 using Xceed.Document.NET;
 using System.IO;
+using System.Diagnostics;
 
 namespace APGSGA_GPP_App
 {
@@ -82,6 +83,7 @@ namespace APGSGA_GPP_App
         //Initialisert den Querry-String und das Drucken des Benutzers
         #region Create and Format the User
 
+        [Obsolete]
         private void Create_B_Click(object sender, EventArgs e)
         {
             //Get all needed Variables
@@ -132,7 +134,7 @@ namespace APGSGA_GPP_App
             //adding right time
             if (isBis)
             {
-                end += "00:00";
+                end += "01:00";
             }
             else
             {
@@ -237,6 +239,7 @@ namespace APGSGA_GPP_App
         //Druckt den Benutzer
         #region Print Handling
 
+        [Obsolete]
         public void print(string username, string password)
         {
             //Closing Open Files just in case
@@ -249,6 +252,12 @@ namespace APGSGA_GPP_App
                 }
             }
 
+            //Creating DIrectory
+            if (!Directory.Exists(@"C:\temp\"))
+            {
+                Directory.CreateDirectory(@"C:\temp\");
+            }
+
             //Deleting Old Files
             if (File.Exists(fileName))
             {
@@ -258,7 +267,7 @@ namespace APGSGA_GPP_App
             //Create Variables
             var doc = DocX.Create(fileName);
             string title = "Gast Zugang APGSGA";
-            string wlanName = "WLAN-Name: APG-Guest" + Environment.NewLine;
+            string wlanName = "WLAN-Name: APGSGAguest" + Environment.NewLine;
             string user = $"Benutzernamen: {username}" + Environment.NewLine;
             string passwd = $"Passwort: {password}";
 
@@ -284,27 +293,35 @@ namespace APGSGA_GPP_App
             doc.AddProtection(EditRestrictions.readOnly);
             doc.Save();
 
-            //Hide Word
-            FileInfo f = new FileInfo(fileName);
-            f.Attributes = FileAttributes.Hidden;
+            Microsoft.Office.Interop.Word.Application appWord = new Microsoft.Office.Interop.Word.Application();
+            Microsoft.Office.Interop.Word.Document wordDocument = appWord.Documents.Open(fileName);
+            wordDocument.ExportAsFixedFormat(@"C:\temp\out.pdf", Microsoft.Office.Interop.Word.WdExportFormat.wdExportFormatPDF);
+            wordDocument.Close();
+            appWord.Quit();
+
+            //Delete Word
+            if (File.Exists(fileName))
+            {
+                File.Delete(fileName);
+            }
 
             //Real Print
             printDocument();
         }
 
+        [Obsolete]
         private void printDocument()
         {
-            //If Doc is not defined Open it first.
-            if (doc == null)
-            {
-                //Open the File
-                doc = word.Documents.Open(fileName, ReadOnly: true, Visible: true);
-            }
-
             try
             {
-                //Print the Document
-                doc.PrintOut();
+                Process p = new Process();
+                p.StartInfo = new ProcessStartInfo()
+                {
+                    CreateNoWindow = true,
+                    Verb = "print",
+                    FileName = @"C:\temp\out.pdf" //put the correct path here
+                };
+                p.Start();
             }
             catch (Exception e)
             {
@@ -312,10 +329,7 @@ namespace APGSGA_GPP_App
                 MessageBox.Show($"Error while Printing: {e.Message}");
             }
 
-            //Close doc
-            doc.Close();
-
-            //Close everything Just in Case
+            /*Close everything Just in Case
             Microsoft.Office.Interop.Word.Application wordRun = (Microsoft.Office.Interop.Word.Application)System.Runtime.InteropServices.Marshal.GetActiveObject("Word.Application");
             foreach (Microsoft.Office.Interop.Word.Document dok in wordRun.Documents)
             {
@@ -324,12 +338,7 @@ namespace APGSGA_GPP_App
                     dok.Close(SaveChanges: false);
                 }
             }
-
-            //Delete the File to clean up
-            if (File.Exists(fileName))
-            {
-                File.Delete(fileName);
-            }
+            */
 
             //Document Printed
             MessageBox.Show("Benutzer erfolgreich erstellt");

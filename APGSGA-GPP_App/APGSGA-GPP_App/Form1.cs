@@ -89,11 +89,15 @@ namespace APGSGA_GPP_App
             //Get all needed Variables
             string username = this.User_TB.Text;
             string password = this.PW_TB.Text;
-            string dateBis = this.dTP_Bis.Text;
-            string dateVon = this.dTP_Von.Text;
+            DateTime dateBis = dTP_Bis.Value;
+            DateTime dateVon = dTP_Von.Value;
+
+            DateTime time = dTP_Von.Value;
+            string test = time.ToString(@"MM\/dd\/yyyy HH:mm");
+            MessageBox.Show(test);
 
             //Format querry
-            string show = "local-userdb-guest add username " + username + " password " + password + " start-time " + formatTime(dateBis, true) + " expiry time " + formatTime(dateVon, false);
+            string show = "local-userdb-guest add username " + username + " password " + password + " start-time " + dateVon.ToString(@"MM\/dd\/yyyy") + "01:00" + " expiry time " + dateBis.ToString(@"MM\/dd\/yyyy") + "23:59";
 
             //Print the Document
             Thread tprint = new Thread(() => print(username, password));
@@ -108,74 +112,6 @@ namespace APGSGA_GPP_App
             //Update XML to show the created users
             //Thread thread = new Thread(() => Program.addAccess(username, password, formatTime(dateVon, true), formatTime(dateBis, false)));
             //thread.Start();
-        }
-
-        public static string formatTime(string Time, bool isBis)
-        {
-            string end = "";
-
-            //Parse Date
-            string tag = Regex.Replace(Time, @"[A-Z]{1}[a-z]*,\s", "");
-            tag = Regex.Replace(tag, @"\.\s[A-Z]{1}[a-z]*\s\d{4}", "");
-            tag = Int32.Parse(tag).ToString("D2");
-
-            //Parse Month
-            string monat = Regex.Replace(Time, @"[A-Z]{1}[a-z]*,\s\d{1,2}\.\s", "");
-            monat = Regex.Replace(monat, @"\s\d{4}", "");
-            monat = formatMonth(monat).ToString("D2");
-
-            //Parse year
-            string jahr = Regex.Replace(Time, @"[A-Z]{1}[a-z¨]*,\s\d{1,2}\.\s[A-Z]{1}[a-z]*\s", "");
-            jahr = Int32.Parse(jahr).ToString("D4");
-
-            //format date
-            end = monat + "/" + tag + "/" + jahr + " ";
-
-            //adding right time
-            if (isBis)
-            {
-                end += "01:00";
-            }
-            else
-            {
-                end += "23:59";
-            }
-
-            return end;
-        }
-
-        public static int formatMonth(string month)
-        {
-            //string to int
-            switch (month)
-            {
-                case "Januar":
-                    return 1;
-                case "Februar":
-                    return 2;
-                case "März":
-                    return 3;
-                case "April":
-                    return 4;
-                case "Mai":
-                    return 5;
-                case "Juni":
-                    return 6;
-                case "Juli":
-                    return 7;
-                case "August":
-                    return 8;
-                case "September":
-                    return 9;
-                case "November":
-                    return 10;
-                case "Oktober":
-                    return 11;
-                case "Dezember":
-                    return 12;
-                default:
-                    return 0;
-            }
         }
 
         #endregion
@@ -207,22 +143,9 @@ namespace APGSGA_GPP_App
         {
             //Get The Text from vonDate
             string end = "";
-            end = this.dTP_Von.Text;
 
-            //Parse the Day
-            string tag = Regex.Replace(end, @"[A-Z]{1}[a-z]*,\s", "");
-            tag = Regex.Replace(tag, @"\.\s[A-Z]{1}[a-z]*\s\d{4}", "");
-
-            //Parse the Month
-            string monat = Regex.Replace(end, @"[A-Z]{1}[a-z]*,\s\d{1,2}\.\s", "");
-            monat = Regex.Replace(monat, @"\s\d{4}", "");
-            monat = formatMonth(monat).ToString();
-
-            //Parse the year
-            string jahr = Regex.Replace(end, @"[A-Z]{1}[a-z¨]*,\s\d{1,2}\.\s[A-Z]{1}[a-z]*\s", "");
-
-            //Format the output
-            end = tag + "." + monat + "." + jahr;
+            DateTime time = dTP_Von.Value;
+            end = time.ToString(@"dd/MM/yyyy");
 
             //Return String
             return end;

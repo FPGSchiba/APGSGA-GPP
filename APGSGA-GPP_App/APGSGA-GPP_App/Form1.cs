@@ -92,10 +92,6 @@ namespace APGSGA_GPP_App
             DateTime dateBis = dTP_Bis.Value;
             DateTime dateVon = dTP_Von.Value;
 
-            DateTime time = dTP_Von.Value;
-            string test = time.ToString(@"MM\/dd\/yyyy HH:mm");
-            MessageBox.Show(test);
-
             //Format querry
             string show = "local-userdb-guest add username " + username + " password " + password + " start-time " + dateVon.ToString(@"MM\/dd\/yyyy") + "01:00" + " expiry time " + dateBis.ToString(@"MM\/dd\/yyyy") + "23:59";
 
@@ -216,55 +212,17 @@ namespace APGSGA_GPP_App
             doc.AddProtection(EditRestrictions.readOnly);
             doc.Save();
 
-            Microsoft.Office.Interop.Word.Application appWord = new Microsoft.Office.Interop.Word.Application();
-            Microsoft.Office.Interop.Word.Document wordDocument = appWord.Documents.Open(fileName);
-            wordDocument.ExportAsFixedFormat(@"C:\temp\out.pdf", Microsoft.Office.Interop.Word.WdExportFormat.wdExportFormatPDF);
-            wordDocument.Close();
-            appWord.Quit();
-
-            //Delete Word
-            if (File.Exists(fileName))
+            using (PrintDialog pd = new PrintDialog())
             {
-                File.Delete(fileName);
+                pd.ShowDialog();
+                ProcessStartInfo info = new ProcessStartInfo(fileName);
+                info.Verb = "PrintTo";
+                info.Arguments = pd.PrinterSettings.PrinterName;
+                info.CreateNoWindow = true;
+                info.WindowStyle = ProcessWindowStyle.Hidden;
+                Process.Start(info);
             }
 
-            //Real Print
-            printDocument();
-        }
-
-        [Obsolete]
-        private void printDocument()
-        {
-            try
-            {
-                Process p = new Process();
-                p.StartInfo = new ProcessStartInfo()
-                {
-                    CreateNoWindow = true,
-                    Verb = "print",
-                    FileName = @"C:\temp\out.pdf" //put the correct path here
-                };
-                p.Start();
-            }
-            catch (Exception e)
-            {
-                //Handling Printer Errors
-                MessageBox.Show($"Error while Printing: {e.Message}");
-            }
-
-            /*Close everything Just in Case
-            Microsoft.Office.Interop.Word.Application wordRun = (Microsoft.Office.Interop.Word.Application)System.Runtime.InteropServices.Marshal.GetActiveObject("Word.Application");
-            foreach (Microsoft.Office.Interop.Word.Document dok in wordRun.Documents)
-            {
-                if (dok.Name == "Gast_WLAN.docx")
-                {
-                    dok.Close(SaveChanges: false);
-                }
-            }
-            */
-
-            //Document Printed
-            MessageBox.Show("Benutzer erfolgreich erstellt");
         }
 
         #endregion

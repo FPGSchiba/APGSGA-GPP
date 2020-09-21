@@ -7,13 +7,21 @@
  * 
  * Funktionen: 
  *      1. Init --> Initialisiert alle Komonenten (Form1 Designer -> Generierter Code)
- *      2. load XML --> Ladet das ins DataSet1 und dann ins DataGrid, danach erstellt es zwei neue spalten mit den Buttons
- *      3. Buttons --> Die Funktionalität der Knöpfe, also Drucken und Löschen von Benutzer
+ *      2. load XML --> Ladet das XML ins DataSet1 und dann ins DataGrid und Formatiert die Columns
+ *        a. Web requests --> Ladet das XML vom Internet herunter uns speichert dieses
  */
 
 using System;
 using System.Windows.Forms;
-using System.Text.RegularExpressions;
+using System.Net.Http;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.IO;
+using System.Net.Http.Headers;
+using System.Xml;
+using System.Data;
+using System.Globalization;
 
 namespace APGSGA_GPP_App
 {
@@ -32,141 +40,180 @@ namespace APGSGA_GPP_App
         //XML öffnen und in ins DataGrid einlesen / Buttons erstellen
         #region load XML
 
-        private void dataSet1_Initialized(object sender, EventArgs e)
+        private static string session;
+        private static string xmlpath = @"C:\temp\data.xml";
+        private bool isWritten = false;
+
+        [Obsolete]
+        private async void dataSet1_InitializedAsync(object sender, EventArgs e)
         {
-            try
-            {
-                //Checking the XML for known Errors
-                //Program.checkXML();
-                //Program.deleteOldUser();
-            }
-            catch(Exception E)
-            {
-                //Error handling while Xml-Error handling
-                MessageBox.Show(E.Message);
-            }
+            //Start get the XML content
+            await Task.Run(() => getCookie());
 
-            //Get the XML-Content and Format and read it correctly
-            //string temp = Program.getXMLcontent();
-            //temp = formatXML(temp);
-            //System.IO.StringReader xml = new System.IO.StringReader(temp);
+            //Wait for the File to be written
+            while (!isWritten){    }
 
-            try
-            {
-                //Read the XML inside 
-                //dataSet1.ReadXml(xml);
-            }
-            catch(Exception E)
-            {
-                //Error handling while creating data
-                MessageBox.Show(E.Message);
-            }
-            try
-            {
-                //Filling the Table
-                dataGridView1.DataSource = dataSet1.Tables[0];
-            }
-            catch
-            {
-                //Handling Errors with no XML-Data
-                MessageBox.Show("Noch keine Zugänge auf diesem PC erstellt");
-            }
+            //Create xml reader
+            XmlReader xmlFile = XmlReader.Create(xmlpath, new XmlReaderSettings());
 
-            try
+            //Read xml to dataset
+            dataSet1.ReadXml(xmlFile);
+
+            //Hide all not used Columns
+            dataSet1.Tables["row"].Columns["guest_company"].ColumnMapping = MappingType.Hidden;
+            dataSet1.Tables["row"].Columns["guest_phone"].ColumnMapping = MappingType.Hidden;
+            dataSet1.Tables["row"].Columns["guest_email"].ColumnMapping = MappingType.Hidden;
+            dataSet1.Tables["row"].Columns["guest_status"].ColumnMapping = MappingType.Hidden;
+            dataSet1.Tables["row"].Columns["carrier"].ColumnMapping = MappingType.Hidden;
+            dataSet1.Tables["row"].Columns["wlan"].ColumnMapping = MappingType.Hidden;
+            dataSet1.Tables["row"].Columns["visitor_hours"].ColumnMapping = MappingType.Hidden;
+            dataSet1.Tables["row"].Columns["sponsor_username"].ColumnMapping = MappingType.Hidden;
+            dataSet1.Tables["row"].Columns["sponsor_fullname"].ColumnMapping = MappingType.Hidden;
+            dataSet1.Tables["row"].Columns["sponsor_department"].ColumnMapping = MappingType.Hidden;
+            dataSet1.Tables["row"].Columns["sponsor_email"].ColumnMapping = MappingType.Hidden;
+            dataSet1.Tables["row"].Columns["optional_field_1"].ColumnMapping = MappingType.Hidden;
+            dataSet1.Tables["row"].Columns["optional_field_2"].ColumnMapping = MappingType.Hidden;
+            dataSet1.Tables["row"].Columns["optional_field_3"].ColumnMapping = MappingType.Hidden;
+            dataSet1.Tables["row"].Columns["optional_field_4"].ColumnMapping = MappingType.Hidden;
+
+            //Add all Time Columns to a List to easly access them
+            List<string> vs = new List<string>();
+            vs.Add("creation_date");
+            vs.Add("start_date");
+            vs.Add("end_date");
+
+            //For every Time in the Table
+            foreach(string col in vs)
             {
-                //Creating the Delete button
-                int columnIndex = 5;
-                if (dataGridView1.Columns["Löschen"] == null)
+                //Create a List of all Rows from the Column
+                List<string> ids = new List<string>(dataSet1.Tables["row"].Rows.Count);
+                foreach (DataRow row in dataSet1.Tables["row"].Rows)
+                    ids.Add((string)row[col]);
+                IFormatProvider enUsDateFormat = new CultureInfo("en-US").DateTimeFormat;
+
+                //For every Row in the Column
+                foreach (string val in ids)
                 {
-                    dataGridView1.Columns.Insert(columnIndex, Löschen);
-                }
+                    //Format the string to a Date
+                    DateTime time = DateTime.Parse(val, enUsDateFormat);
 
-                //Creating the Print button
-                columnIndex = 6;
-                if (dataGridView1.Columns["Print"] == null)
-                {
-
-                }
-                dataGridView1.Columns.Insert(columnIndex, Print);
-            }
-            catch
-            {
-
-            }
-        }
-
-        //Make the Visuals for the User
-        static string formatXML(string content)
-        {
-            string end = "";
-
-            end = Regex.Replace(content, "guest_username", "Benutzernamen");
-            end = Regex.Replace(end, "guest_password", "Passwort");
-            end = Regex.Replace(end, "creation_date", "Erstellungsdatum");
-            end = Regex.Replace(end, "end_date", "Endet_am");
-            end = Regex.Replace(end, "start_date", "Beginnt_am");
-
-            return end;
-        }
-
-        #endregion
-
-        //Button Funktionen 1. Delete / 2. Print
-        #region Buttons
-
-        //Button Handling
-        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-            //Check if its the right Column
-            if (e.ColumnIndex == dataGridView1.Columns["Löschen"].Index)
-            {
-                //Dobble Check if the User really wants to delete the user
-                DialogResult dialogResult = MessageBox.Show("Willst du diesen Benutzer Wirklich Löschen?", "Lösch bestätigung", MessageBoxButtons.YesNo);
-                if (dialogResult == DialogResult.Yes)
-                {
-                    //If Yes the right username will be taken from the table
-                    dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-                    string usern = dataGridView1.Rows[e.RowIndex].Cells["Benutzernamen"].Value.ToString();
-
-                    //Then the user will be deleted
-                    //Program.deleteUser(usern);
-
-                    //The Form gets closed
-                    Form.ActiveForm.Close();
-                }
-                else if (dialogResult == DialogResult.No)
-                {
-                    //Nothing 
-                }
-            }
-            else if (e.ColumnIndex == dataGridView1.Columns["Print"].Index)
-            {
-                DialogResult dialogResult = MessageBox.Show("Willst du diesen Benutzer wirklich nochmal Drucken?", "Druck bestätigung", MessageBoxButtons.YesNo);
-                if (dialogResult == DialogResult.Yes)
-                {
-                    //If Yes the wright username and Password will be taken from the table
-                    dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-                    string usern = dataGridView1.Rows[e.RowIndex].Cells["Benutzernamen"].Value.ToString();
-                    string passwd = dataGridView1.Rows[e.RowIndex].Cells["Passwort"].Value.ToString();
-
-                    //Makes a cross-thread action to Print the Document
-                    if (Application.OpenForms["Form1"] != null)
+                    //Get the Right Column and Row
+                    for (int i = 0; i < dataSet1.Tables["row"].Rows.Count; i++)
                     {
-                        Application.OpenForms["Form1"].Invoke(new Action(() => {
-
-                            (Application.OpenForms["Form1"] as Form1).print(usern, passwd);
-
-                        }));
+                        for (int j = 0; j < dataSet1.Tables["row"].Columns.Count; j++)
+                        {
+                            //Check if its the right data
+                            if (dataSet1.Tables["row"].Rows[i][j].ToString() == val.ToString())
+                            {
+                                //Change the Date-Format
+                                dataSet1.Tables["row"].Rows[i][j] = time.ToString(@"dd/MM/yyyy HH:mm");
+                            }
+                        }
                     }
+                }
+            }
 
-                }
-                else if (dialogResult == DialogResult.No)
+            //Chang the names to User readable names
+            dataSet1.Tables["row"].Columns["guest_username"].ColumnName = "Benutzernamen";
+            dataSet1.Tables["row"].Columns["guest_password"].ColumnName = "Passwort";
+            dataSet1.Tables["row"].Columns["guest_fullname"].ColumnName = "Name";
+            dataSet1.Tables["row"].Columns["comments"].ColumnName = "Kommentare";
+            dataSet1.Tables["row"].Columns["creation_date"].ColumnName = "Erstellungsdatum";
+            dataSet1.Tables["row"].Columns["start_date"].ColumnName = "von Datum";
+            dataSet1.Tables["row"].Columns["end_date"].ColumnName = "bis Datum";
+            dataSet1.Tables["row"].Columns["grantor"].ColumnName = "Ersteller";
+            dataSet1.Tables["row"].Columns["grantor_role"].ColumnName = "Rolle";
+
+            //show the Formatted row
+            dataGridView1.DataSource = dataSet1.Tables["row"];
+
+            //Close xml reader
+            xmlFile.Close();
+        }
+
+        #region WebRequests
+
+        //To Format the Cookies to reuse them
+        private string formatSession(string sess)
+        {
+            string ret = "";
+
+            var temp = sess.Split(';');
+            ret = temp[0];
+
+            return ret;
+        }
+
+        private async void getCookie()
+        {
+            //Create the Http client
+            HttpClient client = new HttpClient();
+
+            //Login Data to get the Session
+            var values = new Dictionary<string, string>
+            {
+                { "opcode", "login" },
+                { "url", "/logout.html" },
+                { "needxml", "0" },
+                { "uid", Program.user },
+                { "passwd", Program.pwd }
+            };
+
+            //Add the Login Data
+            var content = new FormUrlEncodedContent(values);
+
+            //Ignore unsafe Webpages
+            System.Net.ServicePointManager.ServerCertificateValidationCallback +=
+            delegate (object sender, System.Security.Cryptography.X509Certificates.X509Certificate certificate,
+                        System.Security.Cryptography.X509Certificates.X509Chain chain,
+                        System.Net.Security.SslPolicyErrors sslPolicyErrors)
+            {
+                return true;
+            };
+
+            //Make a POST request to get a Session key
+            using (var response = await client.PostAsync("https://aruba01.apgsga.ch:4343/screens/wms/wms.login", content))
+            {
+                foreach (var header in response.Headers)
                 {
-                    //Nothing 
+                    if(header.Key == "Set-Cookie")
+                    {
+                        //Safe session key
+                        session = formatSession(header.Value.ToArray()[0]);
+                    }
                 }
+            }
+
+            //Use the session key to download the XML
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Cookie", session);
+
+            using (var response = await client.GetAsync("https://aruba01.apgsga.ch:4343/screens/cmnutil/gc_data.xml"))
+            {
+                string xmlcontent = await response.Content.ReadAsStringAsync();
+                using (StreamWriter sw = new StreamWriter(xmlpath))
+                {
+                    //Safe the XML
+                    sw.Write(xmlcontent);
+                    sw.Close();
+                }
+            }
+
+            //Give the OK to read the XML
+            isWritten = true;
+        }
+
+        #endregion
+
+        //Delete the File for safety when Form2 is closing
+        private void Form2_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (File.Exists(xmlpath))
+            {
+                File.Delete(xmlpath);
             }
         }
 
         #endregion
+
     }
 }

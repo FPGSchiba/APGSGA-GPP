@@ -11,7 +11,7 @@
  *      3. Create User --> Initialisiert die Erstellung des Benutzers (Formatiert das Datume und erstellt den Querry-String)
  *      4. Handling Time --> Alle Funktionen zu den TimePicker
  *      5. Print Handling --> Macht das Word Dokument und Druckt es beim Standard Drucker des Gerätes
- *      6. Not Implemented --> Noch nicht fertige Code Stücke / entfernte Code stücke
+ *      6. Show Users --> Zeigt die Form2, also die erstellten Benutzer
  */
 
 
@@ -37,7 +37,6 @@ namespace APGSGA_GPP_App
 
         //Define the Document and Open the Document with invisible Word
         private Microsoft.Office.Interop.Word.Application word = new Microsoft.Office.Interop.Word.Application { Visible = false };
-        private Microsoft.Office.Interop.Word.Document doc;
 
         #endregion
 
@@ -228,7 +227,7 @@ namespace APGSGA_GPP_App
         #endregion
 
         //Angefangener Code
-        #region Not Implemented
+        #region Show Users
 
         private void button1_Click(object sender, EventArgs e)
         {

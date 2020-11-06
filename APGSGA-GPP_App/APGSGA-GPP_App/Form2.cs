@@ -41,6 +41,7 @@ namespace APGSGA_GPP_App
         #region load XML
 
         private static string session;
+        private static string xmlDir = @"C:\temp\";
         private static string xmlpath = @"C:\temp\data.xml";
         private bool isWritten = false;
 
@@ -182,6 +183,12 @@ namespace APGSGA_GPP_App
                         session = formatSession(header.Value.ToArray()[0]);
                     }
                 }
+            }
+
+            //Create Directory if it doesnt exists
+            if (!Directory.Exists(xmlDir))
+            {
+                Directory.CreateDirectory(xmlDir);
             }
 
             //Use the session key to download the XML

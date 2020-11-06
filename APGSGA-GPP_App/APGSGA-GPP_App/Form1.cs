@@ -92,7 +92,7 @@ namespace APGSGA_GPP_App
             DateTime dateVon = dTP_Von.Value;
 
             //Format querry
-            string show = "local-userdb-guest add username " + username + " password " + password + " start-time " + dateVon.ToString(@"MM\/dd\/yyyy") + "01:00" + " expiry time " + dateBis.ToString(@"MM\/dd\/yyyy") + "23:59";
+            string show = "local-userdb-guest add username " + username + " password " + password + " start-time " + dateVon.ToString(@"MM\/dd\/yyyy") + " 01:00 " + " expiry time " + dateBis.ToString(@"MM\/dd\/yyyy") + " 23:59";
 
             //Print the Document
             Thread tprint = new Thread(() => print(username, password));

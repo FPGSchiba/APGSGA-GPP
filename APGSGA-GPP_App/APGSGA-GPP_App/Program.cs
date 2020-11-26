@@ -101,9 +101,6 @@ namespace APGSGA_GPP_App
                     SshCommand sc = client.CreateCommand(Data);
                     sc.Execute();
                     string antwort = sc.Result;
-
-                    MessageBox.Show(antwort);
-
                     client.Disconnect();
                 }
             }

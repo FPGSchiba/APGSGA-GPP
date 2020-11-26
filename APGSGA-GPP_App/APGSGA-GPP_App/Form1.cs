@@ -188,6 +188,9 @@ namespace APGSGA_GPP_App
             string wlanName = "WLAN-Name: APGSGAguest" + Environment.NewLine;
             string user = $"Benutzernamen: {username}" + Environment.NewLine;
             string passwd = $"Passwort: {password}";
+            string von = $"Gültig von: {dTP_Von.Value.ToString("dd.MM.yyyy ")} 01:00";
+            string bis = $"Gültig bis: {dTP_Bis.Value.ToString("dd.MM.yyyy")} 23:59";
+            string creationTime = $"Erstellungszeit: {DateTime.Now.ToString("dd.MM.yyyy HH:mm")}";
 
             //Formatting Title  
             Formatting titleFormat = new Formatting();
@@ -204,22 +207,53 @@ namespace APGSGA_GPP_App
             textParagraphFormat.FontFamily = new Font("Seoge UI");
             textParagraphFormat.Size = 14;
 
-            //Insert text  
+            //Formatting Footer Text
+            Formatting textFooterParagraphFormat = new Formatting();
+            textFooterParagraphFormat.FontFamily = new Font("Seoge UI");
+            textFooterParagraphFormat.Size = 10;
+
+            //Insert text 
+            doc.AddFooters();
             doc.InsertParagraph(wlanName, false, textParagraphFormat);
             doc.InsertParagraph(user, false, textParagraphFormat);
             doc.InsertParagraph(passwd, false, textParagraphFormat);
+            doc.Footers.Odd.InsertParagraph(von, false, textFooterParagraphFormat).Alignment = Alignment.right;
+            doc.Footers.Odd.InsertParagraph(bis, false, textFooterParagraphFormat).Alignment = Alignment.right;
+            doc.Footers.Odd.InsertParagraph(creationTime, false, textFooterParagraphFormat).Alignment = Alignment.right;
             doc.AddProtection(EditRestrictions.readOnly);
             doc.Save();
 
             using (PrintDialog pd = new PrintDialog())
             {
-                pd.ShowDialog();
-                ProcessStartInfo info = new ProcessStartInfo(fileName);
-                info.Verb = "PrintTo";
-                info.Arguments = pd.PrinterSettings.PrinterName;
-                info.CreateNoWindow = true;
-                info.WindowStyle = ProcessWindowStyle.Hidden;
-                Process.Start(info);
+                if(pd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    Microsoft.Office.Interop.Word.Application app = (Microsoft.Office.Interop.Word.Application)System.Runtime.InteropServices.Marshal.GetActiveObject("Word.Application");
+
+                    app.DisplayAlerts = Microsoft.Office.Interop.Word.WdAlertLevel.wdAlertsNone;
+
+                    object filename = fileName;
+                    object missingValue = Type.Missing;
+
+                    Microsoft.Office.Interop.Word.Document document = app.Documents.Open(ref filename);
+
+                    app.ActivePrinter = pd.PrinterSettings.PrinterName;
+
+                    object myTrue = true;
+                    object myFalse = false;
+
+                    app.ActiveDocument.PrintOut(ref myTrue, ref myFalse, pd.PrinterSettings.PrintRange, ref missingValue, pd.PrinterSettings.FromPage.ToString(), pd.PrinterSettings.ToPage.ToString(), ref missingValue, pd.PrinterSettings.Copies, ref missingValue, ref missingValue, ref myFalse, ref missingValue, ref missingValue, ref missingValue);
+
+                    document.Close(ref missingValue, ref missingValue, ref missingValue);
+
+                    while (app.BackgroundPrintingStatus > 0)
+                    {
+                        System.Threading.Thread.Sleep(250);
+                    }
+
+                    app.Quit();
+
+                    MessageBox.Show("Fertig!");
+                }
             }
 
         }

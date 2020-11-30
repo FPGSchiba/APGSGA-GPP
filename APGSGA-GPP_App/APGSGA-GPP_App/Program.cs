@@ -101,6 +101,7 @@ namespace APGSGA_GPP_App
                     SshCommand sc = client.CreateCommand(Data);
                     sc.Execute();
                     string antwort = sc.Result;
+                    if (antwort == "") {    } else{ MessageBox.Show(antwort); }
                     client.Disconnect();
                 }
             }
@@ -108,6 +109,29 @@ namespace APGSGA_GPP_App
             {
                 //Error Message, when the Command couldn't be executed
                 MessageBox.Show("Error while connecting to the Server, please check your network");
+            }
+        }
+
+        public static void delUser(string usern)
+        {
+            try
+            {
+                //connect to the server with SSH
+                using (SshClient client = new SshClient(host, user, pwd))
+                {
+                    client.Connect();
+                    //create a command in the connection and execute it
+                    SshCommand sc = client.CreateCommand($"local-userdb-guest del username \"{usern}\"");
+                    sc.Execute();
+                    string antewort = sc.Result;
+                    if (antewort == "") { MessageBox.Show("Benutzer gelöscht!"); } else { MessageBox.Show(antewort); }
+                    client.Disconnect();
+                }
+            }
+            catch (Exception e)
+            {
+                //Error Handling
+                MessageBox.Show(e.Message);
             }
         }
 
@@ -267,37 +291,6 @@ namespace APGSGA_GPP_App
             MessageBox.Show(results);
         }
 
-        //Not Implemented
-        static void delUser(string usern)
-        {
-            try
-            {
-                //connect to the server with SSH
-                using (SshClient client = new SshClient(host, user, pwd))
-                {
-                    client.Connect();
-                    //create a command in the connection and execute it
-                    SshCommand sc = client.CreateCommand($"ocal-userdb-guest del username \"{usern}\"");
-                    sc.Execute();
-                    string antewort = sc.Result;
-                    if (antewort == "")
-                    {
-
-                    }
-                    else
-                    {
-                        MessageBox.Show(antewort);
-                    }
-                    client.Disconnect();
-                }
-            }
-            catch (Exception e)
-            {
-                //Error Handling
-                MessageBox.Show(e.Message);
-            }
-        }
-    
         #endregion
     }
 }

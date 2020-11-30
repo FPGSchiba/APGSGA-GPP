@@ -130,6 +130,17 @@ namespace APGSGA_GPP_App
 
             //Close xml reader
             xmlFile.Close();
+
+            //Add the delete Button-Column
+            DataGridViewButtonColumn uninstallButtonColumn = new DataGridViewButtonColumn();
+            uninstallButtonColumn.Name = "delete";
+            uninstallButtonColumn.Text = "Löschen";
+            if (dataGridView1.Columns["delete"] == null)
+            {
+                dataGridView1.Columns.Insert(9, uninstallButtonColumn);
+            }
+
+            dataGridView1.Refresh();
         }
 
         #region WebRequests
@@ -217,6 +228,25 @@ namespace APGSGA_GPP_App
             if (File.Exists(xmlpath))
             {
                 File.Delete(xmlpath);
+            }
+        }
+
+        [Obsolete]
+        private void DataGridViewSoftware_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.ColumnIndex == dataGridView1.Columns["delete"].Index)
+            {
+                // Ask if it was not an exident
+                DialogResult dialogResult = MessageBox.Show("Sure", "Benutzer wirklich löschen?", MessageBoxButtons.YesNo);
+                if (dialogResult == DialogResult.Yes)
+                {
+                    Program.delUser(dataGridView1.Rows[e.RowIndex].Cells[dataGridView1.Columns[0].Index].Value.ToString());
+                    this.Close();
+                }
+                else if (dialogResult == DialogResult.No)
+                {
+                    //Nothing
+                }
             }
         }
 

@@ -28,6 +28,7 @@ namespace APGSGA_GPP_App
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
+        [System.Obsolete]
         private void InitializeComponent()
         {
             this.dataSet1 = new System.Data.DataSet();
@@ -53,8 +54,9 @@ namespace APGSGA_GPP_App
             this.dataGridView1.Location = new System.Drawing.Point(0, 0);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.ReadOnly = true;
-            this.dataGridView1.Size = new System.Drawing.Size(959, 487);
+            this.dataGridView1.Size = new System.Drawing.Size(1043, 487);
             this.dataGridView1.TabIndex = 0;
+            this.dataGridView1.CellClick += DataGridViewSoftware_CellClick;
             // 
             // Löschen
             // 
@@ -71,7 +73,7 @@ namespace APGSGA_GPP_App
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.ClientSize = new System.Drawing.Size(959, 487);
+            this.ClientSize = new System.Drawing.Size(1043, 487);
             this.Controls.Add(this.dataGridView1);
             this.Name = "Form2";
             this.Text = "Zugänge";

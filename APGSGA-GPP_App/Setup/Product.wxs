@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <Product Id="{04882BA0-5F75-4448-8450-B962242E6EA7}" Name="Gast WLAN Zugang" Language="1033" Version="1.0.0.0" Manufacturer="Jann Erhardt" UpgradeCode="58eb0b77-f8e0-4340-b3e6-f6a5a0da5c6e">
+        <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+        <MajorUpgrade DowngradeErrorMessage="Eine neuere Version von Gast WLAN Zugang ist bereits installiert." />
+        <MediaTemplate />
+        <Feature Id="ProductFeature" Title="Installer" Level="1">
+            <ComponentGroupRef Id="ProductComponents" />
+        </Feature>
+        <UI />
+    </Product>
+    <Fragment>
+        <Directory Id="TARGETDIR" Name="SourceDir">
+            <Directory Id="ProgramFilesFolder">
+                <Directory Id="INSTALLFOLDER" Name="Aruba">
+                    <Directory Id="test" Name="AnotherDirectory">
+                        <Component Id="test" Guid="e29f1a9e-3ede-40d6-aba0-bfe451002ee3" SharedDllRefCount="no" KeyPath="no" NeverOverwrite="no" Permanent="no" Transitive="no" Win64="no" Location="either">
+                            <CreateFolder />
+                        </Component>
+                    </Directory>
+                </Directory>
+            </Directory>
+        </Directory>
+        <Feature Id="test" Title="testfolder" Level="1">
+            <ComponentRef Id="test" />
+        </Feature>
+    </Fragment>
+    <Fragment>
+        <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+            <Component Id="ProductComponent" Guid="">
+                <File Source="$(var.APGSGA-GPP_App.TargetPath)" />
+            </Component>
+        </ComponentGroup>
+    </Fragment>
+</Wix>

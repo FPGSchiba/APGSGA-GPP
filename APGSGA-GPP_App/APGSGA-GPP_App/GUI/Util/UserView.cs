@@ -30,6 +30,7 @@ namespace APGSGA_GPP_App
         //Initialisiert das Windows-Form Fenster
         #region Init
 
+        [Obsolete]
         public Form2()
         {
             InitializeComponent();
